@@ -78,7 +78,11 @@ namespace BookStore.Process
                     {
                         Book = lGreatExpectations,
                         Quantity = 5,
-                        Warehouse = "Neutral Bay"
+                        // Warehouse = "Neutral Bay"
+                        Warehouse = new Warehouse()
+                        {
+                            Name = "Neutral Bay"
+                        }
                     };
 
                     lContainer.Stocks.Add(lGreatExpectationsStock);
@@ -97,7 +101,11 @@ namespace BookStore.Process
                     {
                         Book = lSoloist,
                         Quantity = 7,
-                        Warehouse = "Neutral Bay"
+                        //Warehouse = "Neutral Bay"
+                        Warehouse = new Warehouse()
+                        {
+                            Name = "Neutral Bay"
+                        }
                     };
 
                     lContainer.Stocks.Add(lSoloistStock);
@@ -118,7 +126,11 @@ namespace BookStore.Process
                         {
                             Book = lItem,
                             Quantity = 10 + i,
-                            Warehouse = String.Format("Warehouse {0}", i)
+                            // Warehouse = String.Format("Warehouse {0}", i)
+                            Warehouse = new Warehouse()
+                            {
+                                Name = String.Format("Warehouse {0}", i)
+                            }
                         };
 
                         lContainer.Stocks.Add(lStock);

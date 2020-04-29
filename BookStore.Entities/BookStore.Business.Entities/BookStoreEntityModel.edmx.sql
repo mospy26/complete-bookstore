@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/16/2019 19:33:12
--- Generated from EDMX file: C:\Users\gre403\Documents\Basser\COMP5348 2019\Group Project\GroupProject\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
+-- Date Created: 04/29/2020 23:00:25
+-- Generated from EDMX file: C:\Users\brend\Documents\COMP5348 Assignment 2\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -41,6 +41,9 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_BookStock]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Books] DROP CONSTRAINT [FK_BookStock];
 GO
+IF OBJECT_ID(N'[dbo].[FK_WarehouseStock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Stocks] DROP CONSTRAINT [FK_WarehouseStock];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
@@ -69,6 +72,9 @@ IF OBJECT_ID(N'[dbo].[Books]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Roles]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Roles];
+GO
+IF OBJECT_ID(N'[dbo].[Warehouses]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Warehouses];
 GO
 IF OBJECT_ID(N'[dbo].[UserRole]', 'U') IS NOT NULL
     DROP TABLE [dbo].[UserRole];
@@ -125,8 +131,8 @@ GO
 -- Creating table 'Stocks'
 CREATE TABLE [dbo].[Stocks] (
     [Id] uniqueidentifier  NOT NULL,
-    [Warehouse] nvarchar(max)  NOT NULL,
-    [Quantity] int  NULL
+    [Quantity] int  NULL,
+    [WarehouseId] int  NOT NULL
 );
 GO
 
@@ -151,6 +157,13 @@ GO
 
 -- Creating table 'Roles'
 CREATE TABLE [dbo].[Roles] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Name] nvarchar(max)  NOT NULL
+);
+GO
+
+-- Creating table 'Warehouses'
+CREATE TABLE [dbo].[Warehouses] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Name] nvarchar(max)  NOT NULL
 );
@@ -212,6 +225,12 @@ GO
 -- Creating primary key on [Id] in table 'Roles'
 ALTER TABLE [dbo].[Roles]
 ADD CONSTRAINT [PK_Roles]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Warehouses'
+ALTER TABLE [dbo].[Warehouses]
+ADD CONSTRAINT [PK_Warehouses]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -337,6 +356,21 @@ GO
 CREATE INDEX [IX_FK_BookStock]
 ON [dbo].[Books]
     ([Stock_Id]);
+GO
+
+-- Creating foreign key on [WarehouseId] in table 'Stocks'
+ALTER TABLE [dbo].[Stocks]
+ADD CONSTRAINT [FK_WarehouseStock]
+    FOREIGN KEY ([WarehouseId])
+    REFERENCES [dbo].[Warehouses]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_WarehouseStock'
+CREATE INDEX [IX_FK_WarehouseStock]
+ON [dbo].[Stocks]
+    ([WarehouseId]);
 GO
 
 -- --------------------------------------------------
