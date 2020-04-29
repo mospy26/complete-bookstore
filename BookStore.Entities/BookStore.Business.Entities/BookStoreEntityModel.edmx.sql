@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/29/2020 23:00:25
--- Generated from EDMX file: C:\Users\brend\Documents\COMP5348 Assignment 2\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
+-- Date Created: 04/30/2020 00:20:04
+-- Generated from EDMX file: C:\Users\Mustafa Fulwala\Desktop\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -39,7 +39,7 @@ IF OBJECT_ID(N'[dbo].[FK_DeliveryOrder]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Deliveries] DROP CONSTRAINT [FK_DeliveryOrder];
 GO
 IF OBJECT_ID(N'[dbo].[FK_BookStock]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Books] DROP CONSTRAINT [FK_BookStock];
+    ALTER TABLE [dbo].[Stocks] DROP CONSTRAINT [FK_BookStock];
 GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseStock]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Stocks] DROP CONSTRAINT [FK_WarehouseStock];
@@ -132,7 +132,8 @@ GO
 CREATE TABLE [dbo].[Stocks] (
     [Id] uniqueidentifier  NOT NULL,
     [Quantity] int  NULL,
-    [WarehouseId] int  NOT NULL
+    [Book_Id] int  NOT NULL,
+    [Warehouse_Id] int  NOT NULL
 );
 GO
 
@@ -150,8 +151,7 @@ CREATE TABLE [dbo].[Books] (
     [Title] nvarchar(max)  NOT NULL,
     [Author] nvarchar(max)  NOT NULL,
     [Genre] nvarchar(max)  NOT NULL,
-    [Price] float  NOT NULL,
-    [Stock_Id] uniqueidentifier  NOT NULL
+    [Price] float  NOT NULL
 );
 GO
 
@@ -343,25 +343,25 @@ ON [dbo].[Deliveries]
     ([Order_Id]);
 GO
 
--- Creating foreign key on [Stock_Id] in table 'Books'
-ALTER TABLE [dbo].[Books]
+-- Creating foreign key on [Book_Id] in table 'Stocks'
+ALTER TABLE [dbo].[Stocks]
 ADD CONSTRAINT [FK_BookStock]
-    FOREIGN KEY ([Stock_Id])
-    REFERENCES [dbo].[Stocks]
+    FOREIGN KEY ([Book_Id])
+    REFERENCES [dbo].[Books]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_BookStock'
 CREATE INDEX [IX_FK_BookStock]
-ON [dbo].[Books]
-    ([Stock_Id]);
+ON [dbo].[Stocks]
+    ([Book_Id]);
 GO
 
--- Creating foreign key on [WarehouseId] in table 'Stocks'
+-- Creating foreign key on [Warehouse_Id] in table 'Stocks'
 ALTER TABLE [dbo].[Stocks]
 ADD CONSTRAINT [FK_WarehouseStock]
-    FOREIGN KEY ([WarehouseId])
+    FOREIGN KEY ([Warehouse_Id])
     REFERENCES [dbo].[Warehouses]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -370,7 +370,7 @@ GO
 -- Creating non-clustered index for FOREIGN KEY 'FK_WarehouseStock'
 CREATE INDEX [IX_FK_WarehouseStock]
 ON [dbo].[Stocks]
-    ([WarehouseId]);
+    ([Warehouse_Id]);
 GO
 
 -- --------------------------------------------------

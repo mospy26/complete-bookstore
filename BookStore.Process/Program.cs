@@ -57,6 +57,16 @@ namespace BookStore.Process
             ServiceLocator.Current.GetInstance<IUserProvider>().CreateUser(lCustomer);
         }
 
+        private static Stock CreateStock(Book pBook, Warehouse pWarehouse, int pQuantity)
+        {
+            return new Stock()
+            {
+                Quantity = pQuantity,
+                Warehouse = pWarehouse,
+                Book = pBook
+            };
+        }
+
         private static void InsertCatalogueEntities()
         {
             using (TransactionScope lScope = new TransactionScope())
@@ -64,30 +74,35 @@ namespace BookStore.Process
             {
                 if (lContainer.Books.Count() == 0)
                 {
-                    Book lGreatExpectations = new Book()
+                    Warehouse lNeutralBay = new Warehouse()
+                    {
+                        Name = "Neutral Bay"
+                    };
+
+                    Warehouse lTheWarehouse = new Warehouse()
+                    {
+                        Name = "The Warehouse"
+                    };
+
+                    Warehouse lStorageKing = new Warehouse()
+                    {
+                        Name = "Storage King"
+                    };
+
+                    Warehouse lAmazon = new Warehouse()
+                    {
+                        Name = "Amazon"
+                    };
+
+                    Book lGreatExpectations = new Book() // 4 4 3 1 as Stocks
                     {
                         Author = "Jane Austen",
                         Genre = "Fiction",
                         Price = 20.0,
-                        Title = "Pride and Prejudice"
+                        Title = "Pride and Prejudice",
                     };
 
-                    lContainer.Books.Add(lGreatExpectations);
-
-                    Stock lGreatExpectationsStock = new Stock()
-                    {
-                        Book = lGreatExpectations,
-                        Quantity = 5,
-                        // Warehouse = "Neutral Bay"
-                        Warehouse = new Warehouse()
-                        {
-                            Name = "Neutral Bay"
-                        }
-                    };
-
-                    lContainer.Stocks.Add(lGreatExpectationsStock);
-
-                    Book lSoloist = new Book()
+                    Book lSoloist = new Book() // 1 5 2 4 
                     {
                         Author = "Charles Dickens",
                         Genre = "Fiction",
@@ -95,46 +110,54 @@ namespace BookStore.Process
                         Title = "Grape Expectations"
                     };
 
+                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 4);
+                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
+                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
+                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
+
+                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 1);
+                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 5);
+                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 2);
+                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 4);
+
+                    lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
 
-                    Stock lSoloistStock = new Stock()
-                    {
-                        Book = lSoloist,
-                        Quantity = 7,
-                        //Warehouse = "Neutral Bay"
-                        Warehouse = new Warehouse()
-                        {
-                            Name = "Neutral Bay"
-                        }
-                    };
+                    lContainer.Stocks.Add(lGreatExpectationNeutralBayStock);
+                    lContainer.Stocks.Add(lGreatExpectationTheWarehouseStock);
+                    lContainer.Stocks.Add(lGreatExpectationStorageKingStock);
+                    lContainer.Stocks.Add(lGreatExpectationAmazonStock);
 
-                    lContainer.Stocks.Add(lSoloistStock);
+                    lContainer.Stocks.Add(lSoloistNeutralBayStock);
+                    lContainer.Stocks.Add(lSoloistStorageKingStock);
+                    lContainer.Stocks.Add(lSoloistTheWarehouseStock);
+                    lContainer.Stocks.Add(lSoloistAmazonStock);
 
-                    for (int i = 1; i < 10; i++)
-                    {
-                        Book lItem = new Book()
-                        {
-                            Author = String.Format("Author {0}", i.ToString()),
-                            Genre = String.Format("Genre {0}", i),
-                            Price = i,
-                            Title = String.Format("Title {0}", i)
-                        };
+                    //for (int i = 1; i < 10; i++)
+                    //{
+                    //    Book lItem = new Book()
+                    //    {
+                    //        Author = String.Format("Author {0}", i.ToString()),
+                    //        Genre = String.Format("Genre {0}", i),
+                    //        Price = i,
+                    //        Title = String.Format("Title {0}", i)
+                    //    };
 
-                        lContainer.Stocks.Add(lSoloistStock);
+                    //    lContainer.Stocks.Add(lSoloistStock);
 
-                        Stock lStock = new Stock()
-                        {
-                            Book = lItem,
-                            Quantity = 10 + i,
-                            // Warehouse = String.Format("Warehouse {0}", i)
-                            Warehouse = new Warehouse()
-                            {
-                                Name = String.Format("Warehouse {0}", i)
-                            }
-                        };
+                    //    Stock lStock = new Stock()
+                    //    {
+                    //        Book = lItem,
+                    //        Quantity = 10 + i,
+                    //        // Warehouse = String.Format("Warehouse {0}", i)
+                    //        Warehouse = new Warehouse()
+                    //        {
+                    //            Name = String.Format("Warehouse {0}", i)
+                    //        }
+                    //    };
 
-                        lContainer.Stocks.Add(lStock);
-                    }
+                    //    lContainer.Stocks.Add(lStock);
+                    //}
 
                     lContainer.SaveChanges();
                     lScope.Complete();

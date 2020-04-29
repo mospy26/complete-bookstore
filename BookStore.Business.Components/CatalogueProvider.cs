@@ -13,7 +13,7 @@ namespace BookStore.Business.Components
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                return (from Book in lContainer.Books.Include(Common.ReflectionUtil.GetPropertyName(() => new Book().Stock))
+                return (from Book in lContainer.Books.Include(Common.ReflectionUtil.GetPropertyName(() => new Book().Stocks))
                        orderby Book.Id
                        select Book).Skip(pOffset).Take(pCount).ToList();
             }
@@ -24,7 +24,7 @@ namespace BookStore.Business.Components
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                return (from Book in lContainer.Books.Include(Common.ReflectionUtil.GetPropertyName(() => new Book().Stock))
+                return (from Book in lContainer.Books.Include(Common.ReflectionUtil.GetPropertyName(() => new Book().Stocks))
                         where Book.Id == pId
                         select Book).FirstOrDefault();
             }
