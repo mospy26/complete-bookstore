@@ -7,7 +7,7 @@
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
-GOsql
+GO
 USE [Bank];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
