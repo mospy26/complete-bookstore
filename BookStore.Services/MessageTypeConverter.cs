@@ -34,7 +34,7 @@ namespace BookStore.Services
         private void InitializeInternalToExternalMappings()
         {
             AutoMapper.Mapper.CreateMap<BookStore.Business.Entities.Book,
-                                        BookStore.Services.MessageTypes.Book>().ForMember(dest => dest.StockCount, opts => opts.MapFrom( src => src.Stock.Quantity));
+                                        BookStore.Services.MessageTypes.Book>().ForMember(dest => dest.StockCount, opts => opts.MapFrom(src => src.Stocks.Sum(l => l.Quantity)));
 
             AutoMapper.Mapper.CreateMap<BookStore.Business.Entities.Order,
                                         BookStore.Services.MessageTypes.Order>();

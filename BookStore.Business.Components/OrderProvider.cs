@@ -42,8 +42,7 @@ namespace BookStore.Business.Components
                         {
                             int bookId = lOrderItem.Book.Id;
                             lOrderItem.Book = lContainer.Books.Where(book => bookId == book.Id).First();
-                            System.Guid stockId = lOrderItem.Book.Stock.Id;
-                            lOrderItem.Book.Stock = lContainer.Stocks.Where(stock => stockId == stock.Id).First();
+                            lOrderItem.Book.Stocks = lContainer.Stocks.Where(stock => bookId == stock.Book.Id).ToList<Stock>();
                         }
                         // and update the stock levels
                         pOrder.UpdateStockLevels();
@@ -83,13 +82,13 @@ namespace BookStore.Business.Components
         //    }
         //}
 
-        private void LoadBookStocks(Order pOrder)
+        private void LoadOptimalWarehouseStocks(Order pOrder)
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 foreach (OrderItem lOrderItem in pOrder.OrderItems)
                 {
-                    lOrderItem.Book.Stock = lContainer.Stocks.Where((pStock) => pStock.Book.Id == lOrderItem.Book.Id).FirstOrDefault();    
+                    lOrderItem.Book.Stocks = lContainer.Stocks.Where((pStock) => pStock.Book.Id == lOrderItem.Book.Id).ToList<Stock>();    
                 }
             }
         }
