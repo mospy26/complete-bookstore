@@ -1,8 +1,8 @@
-
+    
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/30/2020 00:20:04
+-- Date Created: 05/03/2020 22:13:02
 -- Generated from EDMX file: C:\Users\Mustafa Fulwala\Desktop\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
 -- --------------------------------------------------
 
@@ -169,10 +169,31 @@ CREATE TABLE [dbo].[Warehouses] (
 );
 GO
 
+-- Creating table 'OrderStocks'
+CREATE TABLE [dbo].[OrderStocks] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [Quantity] nvarchar(max)  NOT NULL
+);
+GO
+
 -- Creating table 'UserRole'
 CREATE TABLE [dbo].[UserRole] (
     [User_Id] int  NOT NULL,
     [Roles_Id] int  NOT NULL
+);
+GO
+
+-- Creating table 'OrderStockStock'
+CREATE TABLE [dbo].[OrderStockStock] (
+    [OrderStocks_Id] int  NOT NULL,
+    [Stocks_Id] uniqueidentifier  NOT NULL
+);
+GO
+
+-- Creating table 'OrderItemOrderStock'
+CREATE TABLE [dbo].[OrderItemOrderStock] (
+    [OrderItems_Id] int  NOT NULL,
+    [OrderStocks_Id] int  NOT NULL
 );
 GO
 
@@ -234,10 +255,28 @@ ADD CONSTRAINT [PK_Warehouses]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
+-- Creating primary key on [Id] in table 'OrderStocks'
+ALTER TABLE [dbo].[OrderStocks]
+ADD CONSTRAINT [PK_OrderStocks]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
 -- Creating primary key on [User_Id], [Roles_Id] in table 'UserRole'
 ALTER TABLE [dbo].[UserRole]
 ADD CONSTRAINT [PK_UserRole]
     PRIMARY KEY CLUSTERED ([User_Id], [Roles_Id] ASC);
+GO
+
+-- Creating primary key on [OrderStocks_Id], [Stocks_Id] in table 'OrderStockStock'
+ALTER TABLE [dbo].[OrderStockStock]
+ADD CONSTRAINT [PK_OrderStockStock]
+    PRIMARY KEY CLUSTERED ([OrderStocks_Id], [Stocks_Id] ASC);
+GO
+
+-- Creating primary key on [OrderItems_Id], [OrderStocks_Id] in table 'OrderItemOrderStock'
+ALTER TABLE [dbo].[OrderItemOrderStock]
+ADD CONSTRAINT [PK_OrderItemOrderStock]
+    PRIMARY KEY CLUSTERED ([OrderItems_Id], [OrderStocks_Id] ASC);
 GO
 
 -- --------------------------------------------------
@@ -371,6 +410,54 @@ GO
 CREATE INDEX [IX_FK_WarehouseStock]
 ON [dbo].[Stocks]
     ([Warehouse_Id]);
+GO
+
+-- Creating foreign key on [OrderStocks_Id] in table 'OrderStockStock'
+ALTER TABLE [dbo].[OrderStockStock]
+ADD CONSTRAINT [FK_OrderStockStock_OrderStock]
+    FOREIGN KEY ([OrderStocks_Id])
+    REFERENCES [dbo].[OrderStocks]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [Stocks_Id] in table 'OrderStockStock'
+ALTER TABLE [dbo].[OrderStockStock]
+ADD CONSTRAINT [FK_OrderStockStock_Stock]
+    FOREIGN KEY ([Stocks_Id])
+    REFERENCES [dbo].[Stocks]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_OrderStockStock_Stock'
+CREATE INDEX [IX_FK_OrderStockStock_Stock]
+ON [dbo].[OrderStockStock]
+    ([Stocks_Id]);
+GO
+
+-- Creating foreign key on [OrderItems_Id] in table 'OrderItemOrderStock'
+ALTER TABLE [dbo].[OrderItemOrderStock]
+ADD CONSTRAINT [FK_OrderItemOrderStock_OrderItem]
+    FOREIGN KEY ([OrderItems_Id])
+    REFERENCES [dbo].[OrderItems]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [OrderStocks_Id] in table 'OrderItemOrderStock'
+ALTER TABLE [dbo].[OrderItemOrderStock]
+ADD CONSTRAINT [FK_OrderItemOrderStock_OrderStock]
+    FOREIGN KEY ([OrderStocks_Id])
+    REFERENCES [dbo].[OrderStocks]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_OrderItemOrderStock_OrderStock'
+CREATE INDEX [IX_FK_OrderItemOrderStock_OrderStock]
+ON [dbo].[OrderItemOrderStock]
+    ([OrderStocks_Id]);
 GO
 
 -- --------------------------------------------------

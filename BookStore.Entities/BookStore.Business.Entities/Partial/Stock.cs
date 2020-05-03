@@ -7,9 +7,5 @@ namespace BookStore.Business.Entities
 {
     public partial class Stock
     {
-        public Stock()
-        {
-            this.Id = Guid.NewGuid();
-        }
     }
 }
