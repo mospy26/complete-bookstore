@@ -13,6 +13,26 @@ namespace DeliveryCo.Business.Components
 {
     public class DeliveryProvider : IDeliveryProvider
     {
+        public bool DeleteDelivery(String OrderNumber)
+        {
+
+            using(DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
+            {
+                try
+                {
+
+                    DeliveryInfo deleteDelivery = lContainer.DeliveryInfo.Where<DeliveryInfo>(s => s.OrderNumber.Equals(OrderNumber)).First();
+                    lContainer.DeliveryInfo.Remove(deleteDelivery);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+
+        }
+
         public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo)
         {
             using(TransactionScope lScope = new TransactionScope())

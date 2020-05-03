@@ -8,5 +8,7 @@ namespace DeliveryCo.Business.Components.Interfaces
     public interface IDeliveryProvider
     {
         Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo);
+
+        bool DeleteDelivery(String pDeliveryInfo);
     }
 }
