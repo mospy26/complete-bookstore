@@ -45,7 +45,10 @@ namespace BookStore.Business.Components
                             lOrderItem.Book.Stocks = lContainer.Stocks.Where(stock => bookId == stock.Book.Id).ToList<Stock>();
                         }
                         // and update the stock levels
-                        pOrder.UpdateStockLevels();
+                        List<Tuple<Stock, OrderItem, int>> lConsumedStocks = pOrder.UpdateStockLevels();
+
+                        // record the stocks that have been consumed
+                        RecordPurchasedBooksFromStocks(lConsumedStocks, lContainer);
 
                         // add the modified Order tree to the Container (in Changed state)
                         lContainer.Orders.Add(pOrder);
@@ -194,6 +197,25 @@ namespace BookStore.Business.Components
             return 123;
         }
 
-
+        private void RecordPurchasedBooksFromStocks(List<Tuple<Stock, OrderItem, int>> pConsumedStocks, BookStoreEntityModelContainer lContainer)
+        {
+            try
+            {
+                foreach (Tuple<Stock, OrderItem, int> consumedStock in pConsumedStocks)
+                {
+                    OrderStock orderStock = new OrderStock()
+                    {
+                        Quantity = consumedStock.Item3,
+                        Stock = consumedStock.Item1,
+                        OrderItem = consumedStock.Item2
+                    };
+                    lContainer.OrderStocks.Add(orderStock);
+                }
+            }
+            catch (Exception lException)
+            {
+                throw;
+            }
+        }
     }
 }
