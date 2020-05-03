@@ -20,6 +20,11 @@ namespace DeliveryCo.Services
             }
         }
 
+        public bool DeleteDelivery(String OrderNumber)
+        {
+            return DeliveryProvider.DeleteDelivery(OrderNumber);
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public Guid SubmitDelivery(DeliveryInfo pDeliveryInfo)
         {

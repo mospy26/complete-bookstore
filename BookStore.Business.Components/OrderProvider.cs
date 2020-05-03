@@ -71,6 +71,44 @@ namespace BookStore.Business.Components
             SendOrderPlacedConfirmation(pOrder);
         }
 
+        public void CancelOrder(Entities.Order pOrder)
+        {
+            // TODO 
+            using (TransactionScope lScope = new TransactionScope())
+            {
+                //LoadBookStocks(pOrder);
+                //MarkAppropriateUnchangedAssociations(pOrder);
+
+                using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+                {
+                    try
+                    {
+
+                        lContainer.Orders.Remove(pOrder);
+
+                        // ask the Bank service to transfer fundss
+                        TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+
+                        // Delete the delivery in the delivery table 
+                        DeleteDelivery(pOrder.OrderNumber.ToString());
+
+                        // Restore Stock
+                    }
+                    catch (Exception lException)
+                    {
+                        SendOrderErrorMessage(pOrder, lException);
+                        IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private void DeleteDelivery(string OrderNumber)
+        {
+            ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
+        }
+
         //private void MarkAppropriateUnchangedAssociations(Order pOrder)
         //{
         //    pOrder.Customer.MarkAsUnchanged();
@@ -139,6 +177,17 @@ namespace BookStore.Business.Components
             }
         }
 
+        private void TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
+        {
+            try
+            {
+                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
+            } 
+            catch
+            {
+                throw new Exception("Error transferring funds to customer");
+            }
+        }
 
         private int RetrieveBookStoreAccountNumber()
         {

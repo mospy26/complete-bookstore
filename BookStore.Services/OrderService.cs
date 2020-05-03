@@ -38,5 +38,21 @@ namespace BookStore.Services
                     new InsufficientStockFault() { ItemName = ise.ItemName });
             }
         }
+
+        public void CancelOrder(Order pOrder)
+        {
+            try
+            {
+                OrderProvider.CancelOrder(
+                    MessageTypeConverter.Instance.Convert<
+                    BookStore.Services.MessageTypes.Order,
+                    BookStore.Business.Entities.Order>(pOrder)
+                );
+                // Gonna need to throw a more specific error here 
+            } catch (Exception e)
+            {
+                Console.Error.WriteLine(e.ToString());
+            }
+        }
     }
 }

@@ -13,5 +13,7 @@ namespace DeliveryCo.Services.Interfaces
         [OperationContract]
         [TransactionFlow(TransactionFlowOption.Allowed)]
         Guid SubmitDelivery(DeliveryInfo pDeliveryInfo);
+
+        Boolean DeleteDelivery(String OrderNumber);
     }
 }
