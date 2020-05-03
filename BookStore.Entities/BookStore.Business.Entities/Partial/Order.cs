@@ -43,6 +43,8 @@ namespace BookStore.Business.Entities
                     }
                 }
             }
+
+            // Add all this to the new OrderStock table
         }
     }
 }

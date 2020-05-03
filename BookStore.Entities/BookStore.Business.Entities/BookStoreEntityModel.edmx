@@ -300,6 +300,15 @@
             <End Role="Warehouse" EntitySet="Warehouses" />
             <End Role="Stock" EntitySet="Stocks" />
           </AssociationSet>
+          <EntitySet Name="OrderStocks" EntityType="BookStoreEntityModel.OrderStock" />
+          <AssociationSet Name="OrderStockStock" Association="BookStoreEntityModel.OrderStockStock">
+            <End Role="OrderStock" EntitySet="OrderStocks" />
+            <End Role="Stock" EntitySet="Stocks" />
+          </AssociationSet>
+          <AssociationSet Name="OrderStockOrderItem" Association="BookStoreEntityModel.OrderStockOrderItem">
+            <End Role="OrderStock" EntitySet="OrderStocks" />
+            <End Role="OrderItem" EntitySet="OrderItems" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="User">
           <Key>
@@ -347,6 +356,7 @@
           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="Quantity" Nullable="false" />
           <NavigationProperty Name="Book" Relationship="BookStoreEntityModel.OrderItemBook" FromRole="OrderItem" ToRole="Book" />
+          <NavigationProperty Name="OrderStocks" Relationship="BookStoreEntityModel.OrderStockOrderItem" FromRole="OrderItem" ToRole="OrderStock" />
         </EntityType>
         <EntityType Name="Stock">
           <Key>
@@ -356,6 +366,7 @@
           <Property Type="Int32" Name="Quantity" Nullable="true" />
           <NavigationProperty Name="Book" Relationship="BookStoreEntityModel.BookStock" FromRole="Stock" ToRole="Book" />
           <NavigationProperty Name="Warehouse" Relationship="BookStoreEntityModel.WarehouseStock" FromRole="Stock" ToRole="Warehouse" />
+          <NavigationProperty Name="OrderStocks" Relationship="BookStoreEntityModel.OrderStockStock" FromRole="Stock" ToRole="OrderStock" />
         </EntityType>
         <Association Name="OrderOrderItem">
           <End Type="BookStoreEntityModel.Order" Role="Order" Multiplicity="1" />
@@ -423,6 +434,23 @@
         <Association Name="WarehouseStock">
           <End Type="BookStoreEntityModel.Warehouse" Role="Warehouse" Multiplicity="1" />
           <End Type="BookStoreEntityModel.Stock" Role="Stock" Multiplicity="*" />
+        </Association>
+        <EntityType Name="OrderStock">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Stocks" Relationship="BookStoreEntityModel.OrderStockStock" FromRole="OrderStock" ToRole="Stock" />
+          <NavigationProperty Name="OrderItems" Relationship="BookStoreEntityModel.OrderStockOrderItem" FromRole="OrderStock" ToRole="OrderItem" />
+          <Property Name="Quantity" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="OrderStockStock">
+          <End Type="BookStoreEntityModel.OrderStock" Role="OrderStock" Multiplicity="*" />
+          <End Type="BookStoreEntityModel.Stock" Role="Stock" Multiplicity="*" />
+        </Association>
+        <Association Name="OrderStockOrderItem">
+          <End Type="BookStoreEntityModel.OrderStock" Role="OrderStock" Multiplicity="*" />
+          <End Type="BookStoreEntityModel.OrderItem" Role="OrderItem" Multiplicity="*" />
         </Association>
       </Schema>
     </edmx:ConceptualModels>
@@ -641,6 +669,9 @@
         </edmx:AssociationConnector>
         <edmx:EntityTypeShape EntityType="BookStoreEntityModel.Warehouse" Width="1.5" PointX="8.375" PointY="5.875" />
         <edmx:AssociationConnector Association="BookStoreEntityModel.WarehouseStock" />
+        <edmx:EntityTypeShape EntityType="BookStoreEntityModel.OrderStock" Width="1.5" PointX="3.625" PointY="5.125" />
+        <edmx:AssociationConnector Association="BookStoreEntityModel.OrderStockStock" />
+        <edmx:AssociationConnector Association="BookStoreEntityModel.OrderStockOrderItem" />
       </edmx:Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

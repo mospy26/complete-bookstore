@@ -18,6 +18,15 @@ using System;
 public partial class Stock
 {
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public Stock()
+    {
+
+        this.OrderStocks = new HashSet<OrderStock>();
+
+    }
+
+
     public System.Guid Id { get; set; }
 
     public Nullable<int> Quantity { get; set; }
@@ -27,6 +36,10 @@ public partial class Stock
     public virtual Book Book { get; set; }
 
     public virtual Warehouse Warehouse { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+
+    public virtual ICollection<OrderStock> OrderStocks { get; set; }
 
 }
 

@@ -50,6 +50,8 @@ public partial class BookStoreEntityModelContainer : DbContext
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
+    public virtual DbSet<OrderStock> OrderStocks { get; set; }
+
 }
 
 }
