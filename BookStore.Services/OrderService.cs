@@ -22,6 +22,17 @@ namespace BookStore.Services
             }
         }
 
+        public List<Order> GetOrders(int pUserId)
+        {
+            List<BookStore.Business.Entities.Order> lOrdersBefore = OrderProvider.GetOrders(pUserId);
+            List<BookStore.Services.MessageTypes.Order> lOrderAfter = MessageTypeConverter.Instance.Convert<
+                    List<BookStore.Business.Entities.Order>,
+                    List<BookStore.Services.MessageTypes.Order>
+                >(lOrdersBefore);
+            return lOrderAfter;
+            
+        }
+
         public void SubmitOrder(Order pOrder)
         {
             try
