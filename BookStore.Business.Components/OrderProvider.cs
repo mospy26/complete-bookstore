@@ -86,6 +86,10 @@ namespace BookStore.Business.Components
                 {
                     try
                     {
+                        List<OrderItem> orderItems = pOrder.OrderItems.ToList<OrderItem>();
+
+                        // Restore stocks
+                        RestoreStock(orderItems, lContainer);
 
                         lContainer.Orders.Remove(pOrder);
 
@@ -94,8 +98,6 @@ namespace BookStore.Business.Components
 
                         // Delete the delivery in the delivery table 
                         DeleteDelivery(pOrder.OrderNumber.ToString());
-
-                        // Restore Stock
                     }
                     catch (Exception lException)
                     {
@@ -197,7 +199,7 @@ namespace BookStore.Business.Components
             return 123;
         }
 
-        private void RecordPurchasedBooksFromStocks(List<Tuple<Stock, OrderItem, int>> pConsumedStocks, BookStoreEntityModelContainer lContainer)
+        private void RecordPurchasedBooksFromStocks(List<Tuple<Stock, OrderItem, int>> pConsumedStocks, BookStoreEntityModelContainer pContainer)
         {
             try
             {
@@ -209,12 +211,37 @@ namespace BookStore.Business.Components
                         Stock = consumedStock.Item1,
                         OrderItem = consumedStock.Item2
                     };
-                    lContainer.OrderStocks.Add(orderStock);
+                    pContainer.OrderStocks.Add(orderStock);
                 }
             }
             catch (Exception lException)
             {
                 throw;
+            }
+        }
+
+        private void RestoreStock(List<OrderItem> orderItems, BookStoreEntityModelContainer pContainer)
+        {
+
+            List<int> orderIds = orderItems.Select(o => o.Id).ToList<int>();
+
+            List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("OrderStock.Stock").Include("OrderStock.OrderItem")
+                                            where orderIds.Contains(OrderStock1.OrderItem.Id)
+                                            select OrderStock1).ToList<OrderStock>();
+
+            foreach (OrderStock orderStock in orderStocks)
+            {
+                Stock stock = pContainer.Stocks.SingleOrDefault(r => r.Id == orderStock.Stock.Id);
+
+                // the item was not chosen - should never reach this case but in case
+                if (stock == null)
+                {
+                    continue;
+                }
+
+                stock.Quantity += orderStock.Quantity;
+                pContainer.OrderStocks.Remove(orderStock);
+                pContainer.Stocks.Attach(stock);
             }
         }
     }
