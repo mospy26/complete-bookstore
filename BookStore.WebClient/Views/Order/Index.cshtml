@@ -18,7 +18,7 @@
                 Order ID: @item
             </td>
             <td>
-                @using (Html.BeginForm("Index", "Order"))
+                @using (Html.BeginForm("DeleteOrder", "Order"))
                 {
                     @Html.Hidden("pOrderId", item)
                     @Html.Hidden("pReturnUrl", ViewContext.HttpContext.Request.Url.PathAndQuery)

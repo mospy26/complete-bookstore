@@ -89,7 +89,7 @@ namespace BookStore.Business.Components
             SendOrderPlacedConfirmation(pOrder);
         }
 
-        public void CancelOrder(Entities.Order pOrder)
+        public void CancelOrder(int pOrderId)
         {
             // TODO 
             using (TransactionScope lScope = new TransactionScope())
@@ -99,24 +99,32 @@ namespace BookStore.Business.Components
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
+                    Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
+
+                    if (lOrder == null) throw new Exception("Order does not exist"); // TODO throw better exceptions
+
                     try
                     {
-                        List<OrderItem> orderItems = pOrder.OrderItems.ToList<OrderItem>();
+                        List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
 
-                        lContainer.Orders.Remove(pOrder);
-
                         // ask the Bank service to transfer fundss
-                        TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
-                        DeleteDelivery(pOrder.OrderNumber.ToString());
+                        DeleteDelivery(lOrder.OrderNumber.ToString());
+
+                        lContainer.Orders.Remove(lOrder);
+
+                        // save the changes
+                        lContainer.SaveChanges();
+                        lScope.Complete();
                     }
                     catch (Exception lException)
                     {
-                        SendOrderErrorMessage(pOrder, lException);
+                        SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         throw;
                     }
@@ -240,7 +248,7 @@ namespace BookStore.Business.Components
 
             List<int> orderIds = orderItems.Select(o => o.Id).ToList<int>();
 
-            List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("OrderStock.Stock").Include("OrderStock.OrderItem")
+            List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("Stock").Include("OrderItem")
                                             where orderIds.Contains(OrderStock1.OrderItem.Id)
                                             select OrderStock1).ToList<OrderStock>();
 
