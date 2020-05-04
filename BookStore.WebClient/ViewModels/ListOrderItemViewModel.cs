@@ -24,7 +24,7 @@ namespace BookStore.WebClient.ViewModels
             }
         }
 
-        public List<Order> OrderItems
+        public List<int> OrderItems
         {
             get
             {

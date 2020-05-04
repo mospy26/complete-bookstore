@@ -22,16 +22,19 @@ namespace BookStore.Business.Components
             get { return ServiceLocator.Current.GetInstance<IUserProvider>(); }
         }
 
-        public List<Order> GetOrders(int pUserId)
+        public List<int> GetOrders(int pUserId)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                List<Order> lOrders = (from Order1 in lContainer.Orders.Include("OrderItems").Include("Customer")
+                var lOrders = (from Order1 in lContainer.Orders.Include("OrderItems").Include("Customer").Include("OrderItems.Book")
                                        where Order1.Customer.Id == pUserId
-                                       select Order1).ToList<Order>();
+                                       select Order1.Id).ToList<int>();
                 return lOrders;
-                //return lContainer.Orders.Where(s => s.Customer.Id.Equals(pUserId)).ToList<Order>();
+
+                //List<Order> lOrders = lContainer.Orders.Include("OrderItems").Include("OrderItems.Book").Include("OrderItems.Book.Stocks").Include("Customer").Where(s => s.Customer.Id.Equals(pUserId)).ToList<Order>();
+                //lOrders.ForEach(o => { o.OrderItems.ToList().ForEach(oi => oi.Book = null); });
+                //return lOrders;
             }
         }
 

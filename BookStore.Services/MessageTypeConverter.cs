@@ -77,6 +77,7 @@ namespace BookStore.Services
             {
                 return ConvertToExternalType(s as Business.Entities.User) as Destination;
             }
+
             var result = AutoMapper.Mapper.Map<Source, Destination>(s);
             if(typeof(Source) == typeof(MessageTypes.Order))
             {

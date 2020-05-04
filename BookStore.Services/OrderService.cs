@@ -22,14 +22,17 @@ namespace BookStore.Services
             }
         }
 
-        public List<Order> GetOrders(int pUserId)
+        public List<int> GetOrders(int pUserId)
         {
-            List<BookStore.Business.Entities.Order> lOrdersBefore = OrderProvider.GetOrders(pUserId);
-            List<BookStore.Services.MessageTypes.Order> lOrderAfter = MessageTypeConverter.Instance.Convert<
-                    List<BookStore.Business.Entities.Order>,
-                    List<BookStore.Services.MessageTypes.Order>
-                >(lOrdersBefore);
-            return lOrderAfter;
+            List<int> lOrdersBefore = OrderProvider.GetOrders(pUserId);
+            //List<BookStore.Services.MessageTypes.Order> lOrderAfter = MessageTypeConverter.Instance.Convert<
+            //        List<BookStore.Business.Entities.Order>,
+            //        List<BookStore.Services.MessageTypes.Order>
+            //    >(lOrdersBefore);
+
+            //Console.WriteLine(lOrderAfter);
+
+            return lOrdersBefore;
             
         }
 
