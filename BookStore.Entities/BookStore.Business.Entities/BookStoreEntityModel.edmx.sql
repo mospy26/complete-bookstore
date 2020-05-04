@@ -1,8 +1,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/03/2020 23:28:55
--- Generated from EDMX file: C:\Users\Mustafa Fulwala\Desktop\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
+-- Date Created: 05/05/2020 00:11:04
+-- Generated from EDMX file: C:\Users\brend\Documents\COMP5348 Assignment 2\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -42,6 +42,12 @@ IF OBJECT_ID(N'[dbo].[FK_BookStock]', 'F') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[FK_WarehouseStock]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Stocks] DROP CONSTRAINT [FK_WarehouseStock];
+GO
+IF OBJECT_ID(N'[dbo].[FK_StockOrderStock]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OrderStocks] DROP CONSTRAINT [FK_StockOrderStock];
+GO
+IF OBJECT_ID(N'[dbo].[FK_OrderStockOrderItem]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[OrderStocks] DROP CONSTRAINT [FK_OrderStockOrderItem];
 GO
 
 -- --------------------------------------------------
@@ -267,7 +273,7 @@ ADD CONSTRAINT [FK_OrderOrderItem]
     FOREIGN KEY ([OrderOrderItem_OrderItem_Id])
     REFERENCES [dbo].[Orders]
         ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_OrderOrderItem'
@@ -351,7 +357,7 @@ ADD CONSTRAINT [FK_DeliveryOrder]
     FOREIGN KEY ([Order_Id])
     REFERENCES [dbo].[Orders]
         ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_DeliveryOrder'

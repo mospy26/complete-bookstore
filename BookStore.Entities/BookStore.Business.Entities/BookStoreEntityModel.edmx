@@ -165,7 +165,9 @@
     <Property Name="Roles_Id" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="OrderOrderItem">
-    <End Role="Order" Type="BookStoreEntityModel.Store.Orders" Multiplicity="1" />
+    <End Role="Order" Type="BookStoreEntityModel.Store.Orders" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="OrderItem" Type="BookStoreEntityModel.Store.OrderItems" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Order">
@@ -214,7 +216,9 @@
   </Association>
   <Association Name="DeliveryOrder">
     <End Role="Delivery" Type="BookStoreEntityModel.Store.Deliveries" Multiplicity="*" />
-    <End Role="Order" Type="BookStoreEntityModel.Store.Orders" Multiplicity="1" />
+    <End Role="Order" Type="BookStoreEntityModel.Store.Orders" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <ReferentialConstraint>
       <Principal Role="Order">
         <PropertyRef Name="Id" />
@@ -411,8 +415,11 @@
           <NavigationProperty Name="OrderStocks" Relationship="BookStoreEntityModel.StockOrderStock" FromRole="Stock" ToRole="OrderStock" />
         </EntityType>
         <Association Name="OrderOrderItem">
-          <End Type="BookStoreEntityModel.Order" Role="Order" Multiplicity="1" />
-          <End Type="BookStoreEntityModel.OrderItem" Role="OrderItem" Multiplicity="*" />
+          <End Type="BookStoreEntityModel.Order" Role="Order" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="BookStoreEntityModel.OrderItem" Role="OrderItem" Multiplicity="*" >
+          </End>
         </Association>
         <Association Name="CustomerOrder">
           <End Type="BookStoreEntityModel.User" Role="Customer" Multiplicity="1" />
@@ -458,8 +465,11 @@
           <End Type="BookStoreEntityModel.Role" Role="Role" Multiplicity="*" />
         </Association>
         <Association Name="DeliveryOrder">
-          <End Type="BookStoreEntityModel.Delivery" Role="Delivery" Multiplicity="0..1" />
-          <End Type="BookStoreEntityModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="BookStoreEntityModel.Delivery" Role="Delivery" Multiplicity="0..1" >
+          </End>
+          <End Type="BookStoreEntityModel.Order" Role="Order" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
         </Association>
         <Association Name="BookStock">
           <End Type="BookStoreEntityModel.Book" Role="Book" Multiplicity="1" />

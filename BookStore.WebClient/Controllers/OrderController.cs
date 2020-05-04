@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using BookStore.WebClient.ViewModels;
 
-namespace BookStore.WebClient.Controllers45
+namespace BookStore.WebClient.Controllers
 {
     public class OrderController : Controller
     {

@@ -116,6 +116,7 @@ namespace BookStore.Business.Components
                         // Delete the delivery in the delivery table 
                         DeleteDelivery(lOrder.OrderNumber.ToString());
 
+                        lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Orders.Remove(lOrder);
 
                         // save the changes
@@ -124,6 +125,7 @@ namespace BookStore.Business.Components
                     }
                     catch (Exception lException)
                     {
+                        Console.WriteLine(lException.ToString());
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         throw;
