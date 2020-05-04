@@ -17,7 +17,7 @@ namespace BookStore.Business.Entities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Order()
         {
-            this.OrderItems = new HashSet<OrderItem>();
+            this.OrderItems = new List<OrderItem>();
         }
     
         public int Id { get; set; }

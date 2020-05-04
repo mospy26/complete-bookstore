@@ -1,0 +1,24 @@
+﻿@model BookStore.WebClient.ViewModels.ListOrderItemViewModel
+
+@{
+    ViewBag.Title = "ListOrderItem";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Order Items</h2>
+
+<table>
+    <tr>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.OrderItems)
+    {
+        <tr>
+            <td>
+                Order ID: @item
+            </td>
+            <td>
+            </td>
+        </tr>
+    }
+</table>

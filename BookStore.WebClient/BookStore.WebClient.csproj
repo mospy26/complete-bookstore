@@ -171,6 +171,7 @@
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\StoreController.cs" />
     <Compile Include="CustomAuth\CustomHasher.cs" />
     <Compile Include="CustomAuth\CustomRoleStore.cs" />
@@ -180,6 +181,7 @@
     </Compile>
     <Compile Include="Binders\LoggedInUserBinder.cs" />
     <Compile Include="ViewModels\CheckOutViewModel.cs" />
+    <Compile Include="ViewModels\ListOrderItemViewModel.cs" />
     <Compile Include="ViewModels\EditUserDetailsViewModel.cs" />
     <Compile Include="ViewModels\InsufficientStockViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
@@ -240,6 +242,7 @@
     <Content Include="Views\Manage\ErrorUpdatingUserDetails.cshtml" />
     <Content Include="Views\Cart\InsufficientStock.cshtml" />
     <Content Include="Views\Cart\ErrorPage.cshtml" />
+    <Content Include="Views\Order\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

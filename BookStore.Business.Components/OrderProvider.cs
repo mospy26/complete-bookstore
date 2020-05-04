@@ -22,6 +22,22 @@ namespace BookStore.Business.Components
             get { return ServiceLocator.Current.GetInstance<IUserProvider>(); }
         }
 
+        public List<int> GetOrders(int pUserId)
+        {
+            using (TransactionScope lScope = new TransactionScope())
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+            {
+                var lOrders = (from Order1 in lContainer.Orders.Include("OrderItems").Include("Customer").Include("OrderItems.Book")
+                                       where Order1.Customer.Id == pUserId
+                                       select Order1.Id).ToList<int>();
+                return lOrders;
+
+                //List<Order> lOrders = lContainer.Orders.Include("OrderItems").Include("OrderItems.Book").Include("OrderItems.Book.Stocks").Include("Customer").Where(s => s.Customer.Id.Equals(pUserId)).ToList<Order>();
+                //lOrders.ForEach(o => { o.OrderItems.ToList().ForEach(oi => oi.Book = null); });
+                //return lOrders;
+            }
+        }
+
         public void SubmitOrder(Entities.Order pOrder)
         {      
             using (TransactionScope lScope = new TransactionScope())
@@ -33,6 +49,8 @@ namespace BookStore.Business.Components
                 {
                     try
                     {
+                        lContainer.Users.Attach(pOrder.Customer);
+
                         pOrder.OrderNumber = Guid.NewGuid();
                         pOrder.Store = "OnLine";
 
@@ -61,7 +79,7 @@ namespace BookStore.Business.Components
 
                         // and save the order
                         lContainer.SaveChanges();
-                        lScope.Complete();                    
+                        lScope.Complete();        
                     }
                     catch (Exception lException)
                     {
