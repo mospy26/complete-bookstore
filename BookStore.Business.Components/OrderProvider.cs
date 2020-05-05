@@ -71,7 +71,7 @@ namespace BookStore.Business.Components
                         // ask the Bank service to transfer fundss
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
 
-                        // ask the delivery service to organise delivery
+                        // transfer was successful : ask the delivery service to organise delivery
                         PlaceDeliveryForOrder(pOrder);
 
                         // and save the order
@@ -91,6 +91,9 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
+            String customerEmail;
+            Guid orderNumber;
+            // TODO 
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -137,6 +140,7 @@ namespace BookStore.Business.Components
                     }
                 }
             }
+            SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
@@ -184,15 +188,45 @@ namespace BookStore.Business.Components
             });
         }
 
+        private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
+        {
+            EmailProvider.SendMessage(new EmailMessage()
+            {
+                ToAddress = customerEmail,
+                Message = "Your order " + orderEmail + " has been cancelled"
+            });
+        }
+
+        private void GetDeliveryAddress(HashSet<String> pAddresses, Order pOrder)
+        {
+            foreach (OrderItem oi in pOrder.OrderItems)
+            {
+                foreach (OrderStock os in oi.OrderStocks)
+                {
+                    pAddresses.Add(os.Stock.Warehouse.Address.ToString());
+                }
+            }
+        }
+
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            Delivery lDelivery = new Delivery() { DeliveryStatus = DeliveryStatus.Submitted, SourceAddress = "Book Store Address", DestinationAddress = pOrder.Customer.Address, Order = pOrder };
+            // Notify DeliveryCo that books are ready to pick up
+            HashSet<String> lAddress = new HashSet<String>();
+            GetDeliveryAddress(lAddress, pOrder);
+            String lSourceAddress = String.Join(" ", lAddress);
+
+            Delivery lDelivery = new Delivery() { 
+                DeliveryStatus = DeliveryStatus.Submitted, 
+                SourceAddress = lSourceAddress, 
+                DestinationAddress = pOrder.Customer.Address, 
+                Order = pOrder 
+            };
 
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(new DeliveryInfo()
             { 
-                OrderNumber = lDelivery.Order.OrderNumber.ToString(),  
-                SourceAddress = lDelivery.SourceAddress,
-                DestinationAddress = lDelivery.DestinationAddress,
+                OrderNumber = pOrder.OrderNumber.ToString(),  
+                SourceAddress = lSourceAddress,
+                DestinationAddress = pOrder.Customer.Address,
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
             });
 
