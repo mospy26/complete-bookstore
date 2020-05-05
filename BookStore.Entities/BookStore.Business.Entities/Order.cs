@@ -23,7 +23,6 @@ namespace BookStore.Business.Entities
         public int Id { get; set; }
         public Nullable<double> Total { get; set; }
         public System.DateTime OrderDate { get; set; }
-        public string Warehouse { get; set; }
         public string Store { get; set; }
         public System.Guid OrderNumber { get; set; }
     

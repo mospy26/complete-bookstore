@@ -76,22 +76,26 @@ namespace BookStore.Process
                 {
                     Warehouse lNeutralBay = new Warehouse()
                     {
-                        Name = "Neutral Bay"
+                        Name = "Neutral Bay",
+                        Address = "1 Neutral Bay"
                     };
 
                     Warehouse lTheWarehouse = new Warehouse()
                     {
-                        Name = "The Warehouse"
+                        Name = "The Warehouse",
+                        Address = "1 The Warehouse"
                     };
 
                     Warehouse lStorageKing = new Warehouse()
                     {
-                        Name = "Storage King"
+                        Name = "Storage King",
+                        Address = "1 Storage King"
                     };
 
                     Warehouse lAmazon = new Warehouse()
                     {
-                        Name = "Amazon"
+                        Name = "Amazon",
+                        Address = "1 Amazon St"
                     };
 
                     Book lGreatExpectations = new Book() // 4 4 3 1 as Stocks
