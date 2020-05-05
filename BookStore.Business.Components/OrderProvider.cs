@@ -197,15 +197,35 @@ namespace BookStore.Business.Components
             });
         }
 
+        private void GetDeliveryAddress(HashSet<String> pAddresses, Order pOrder)
+        {
+            foreach (OrderItem oi in pOrder.OrderItems)
+            {
+                foreach (OrderStock os in oi.OrderStocks)
+                {
+                    pAddresses.Add(os.Stock.Warehouse.Address.ToString());
+                }
+            }
+        }
+
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            Delivery lDelivery = new Delivery() { DeliveryStatus = DeliveryStatus.Submitted, SourceAddress = "Book Store Address", DestinationAddress = pOrder.Customer.Address, Order = pOrder };
+            HashSet<String> lAddress = new HashSet<String>();
+            GetDeliveryAddress(lAddress, pOrder);
+            String lSourceAddress = String.Join(" ", lAddress);
+
+            Delivery lDelivery = new Delivery() { 
+                DeliveryStatus = DeliveryStatus.Submitted, 
+                SourceAddress = lSourceAddress, 
+                DestinationAddress = pOrder.Customer.Address, 
+                Order = pOrder 
+            };
 
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(new DeliveryInfo()
             { 
-                OrderNumber = lDelivery.Order.OrderNumber.ToString(),  
-                SourceAddress = lDelivery.SourceAddress,
-                DestinationAddress = lDelivery.DestinationAddress,
+                OrderNumber = pOrder.OrderNumber.ToString(),  
+                SourceAddress = lSourceAddress,
+                DestinationAddress = pOrder.Customer.Address,
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
             });
 

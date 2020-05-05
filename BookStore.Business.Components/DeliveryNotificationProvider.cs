@@ -32,7 +32,7 @@ namespace BookStore.Business.Components
                 EmailProvider.SendMessage(new EmailMessage()
                 {
                     ToAddress = lAffectedOrder.Customer.Email,
-                    Message = "Our records show that your order" +lAffectedOrder.OrderNumber + " has been delivered. Thank you for shopping at video store"
+                    Message = "Our records show that your order " +lAffectedOrder.OrderNumber + " has been delivered. Thank you for shopping at Book store"
                 });
             }
             if (status == Entities.DeliveryStatus.Failed)
@@ -40,7 +40,7 @@ namespace BookStore.Business.Components
                 EmailProvider.SendMessage(new EmailMessage()
                 {
                     ToAddress = lAffectedOrder.Customer.Email,
-                    Message = "Our records show that there was a problem" + lAffectedOrder.OrderNumber + " delivering your order. Please contact Book Store"
+                    Message = "Our records show that there was a problem " + lAffectedOrder.OrderNumber + " delivering your order. Please contact Book Store"
                 });
             }
         }
