@@ -19,10 +19,22 @@ namespace BookStore.WebClient.Controllers
 
         public ActionResult DeleteOrder(int pOrderId, String pReturnUrl, UserCache pUserCache)
         {
-            // Do Something 
-            ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
+            try
+            {
+                ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
+            }
+            catch
+            {
+                return RedirectToAction("ErrorPage");
+            }
 
             return RedirectToAction("Index", new { pUserCache = pUserCache });
         }
+
+        public ActionResult ErrorPage()
+        {
+            return View();
+        }
+
     }
 }

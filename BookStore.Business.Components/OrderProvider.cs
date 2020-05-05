@@ -29,7 +29,7 @@ namespace BookStore.Business.Components
             {
                 var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
                                        where Order1.Customer.Id == pUserId
-                                       select Order1).Select(order => order.Id).ToList<int>();
+                                       select Order1).Select(order => order.Id).Where(o => o == 0).ToList<int>();
                 lOrders.OrderBy(x => x);
                 return lOrders;
             }
@@ -91,7 +91,6 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
-            // TODO 
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -101,7 +100,9 @@ namespace BookStore.Business.Components
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
 
-                    if (lOrder == null) throw new Exception("Order does not exist"); // TODO throw better exceptions
+                    if (lOrder == null) throw new OrderDoesNotExistException();
+
+                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new Exception("Order has been delivered"); // TODO Better exceptions
 
                     try
                     {
@@ -204,7 +205,7 @@ namespace BookStore.Business.Components
             }
             catch
             {
-                throw new Exception("Error when transferring funds for order.");
+                throw new Exception("Error when transferring funds for order."); // TODO (provided code) better exception
             }
         }
 
@@ -216,7 +217,7 @@ namespace BookStore.Business.Components
             } 
             catch
             {
-                throw new Exception("Error transferring funds to customer");
+                throw new Exception("Error transferring funds to customer"); // TODO better exception
             }
         }
 

@@ -25,12 +25,6 @@ namespace BookStore.Services
         public List<int> GetOrders(int pUserId)
         {
             List<int> lOrdersBefore = OrderProvider.GetOrders(pUserId);
-            //List<BookStore.Services.MessageTypes.Order> lOrderAfter = MessageTypeConverter.Instance.Convert<
-            //        List<BookStore.Business.Entities.Order>,
-            //        List<BookStore.Services.MessageTypes.Order>
-            //    >(lOrdersBefore);
-
-            //Console.WriteLine(lOrderAfter);
 
             return lOrdersBefore;
             
@@ -58,11 +52,10 @@ namespace BookStore.Services
             try
             {
                 OrderProvider.CancelOrder(pOrderId);
-
-                // TODO throw better exceptions
-            } catch (Exception e)
+            } catch (BookStore.Business.Entities.OrderDoesNotExistException e)
             {
-                Console.Error.WriteLine(e.ToString());
+                throw new FaultException<OrderDoesNotExistFault>(
+                    new OrderDoesNotExistFault() { OrderId = e.OrderId });
             }
         }
     }
