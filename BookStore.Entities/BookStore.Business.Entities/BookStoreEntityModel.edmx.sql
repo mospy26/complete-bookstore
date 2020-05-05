@@ -1,7 +1,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 05/05/2020 00:11:04
+-- Date Created: 05/06/2020 00:13:36
 -- Generated from EDMX file: C:\Users\brend\Documents\COMP5348 Assignment 2\complete-bookstore\BookStore.Entities\BookStore.Business.Entities\BookStoreEntityModel.edmx
 -- --------------------------------------------------
 
@@ -120,7 +120,6 @@ CREATE TABLE [dbo].[Orders] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [Total] float  NULL,
     [OrderDate] datetime  NOT NULL,
-    [Warehouse] nvarchar(max)  NULL,
     [Store] nvarchar(max)  NULL,
     [OrderNumber] uniqueidentifier  NOT NULL,
     [Customer_Id] int  NOT NULL
@@ -173,7 +172,8 @@ GO
 -- Creating table 'Warehouses'
 CREATE TABLE [dbo].[Warehouses] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [Name] nvarchar(max)  NOT NULL
+    [Name] nvarchar(max)  NOT NULL,
+    [Address] nvarchar(max)  NOT NULL
 );
 GO
 
