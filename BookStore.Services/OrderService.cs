@@ -53,16 +53,13 @@ namespace BookStore.Services
             }
         }
 
-        public void CancelOrder(Order pOrder)
+        public void CancelOrder(int pOrderId)
         {
             try
             {
-                OrderProvider.CancelOrder(
-                    MessageTypeConverter.Instance.Convert<
-                    BookStore.Services.MessageTypes.Order,
-                    BookStore.Business.Entities.Order>(pOrder)
-                );
-                // Gonna need to throw a more specific error here 
+                OrderProvider.CancelOrder(pOrderId);
+
+                // TODO throw better exceptions
             } catch (Exception e)
             {
                 Console.Error.WriteLine(e.ToString());

@@ -27,14 +27,11 @@ namespace BookStore.Business.Components
             using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                var lOrders = (from Order1 in lContainer.Orders.Include("OrderItems").Include("Customer").Include("OrderItems.Book")
+                var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
                                        where Order1.Customer.Id == pUserId
-                                       select Order1.Id).ToList<int>();
+                                       select Order1).Select(order => order.Id).ToList<int>();
+                lOrders.OrderBy(x => x);
                 return lOrders;
-
-                //List<Order> lOrders = lContainer.Orders.Include("OrderItems").Include("OrderItems.Book").Include("OrderItems.Book.Stocks").Include("Customer").Where(s => s.Customer.Id.Equals(pUserId)).ToList<Order>();
-                //lOrders.ForEach(o => { o.OrderItems.ToList().ForEach(oi => oi.Book = null); });
-                //return lOrders;
             }
         }
 
@@ -92,7 +89,7 @@ namespace BookStore.Business.Components
             SendOrderPlacedConfirmation(pOrder);
         }
 
-        public void CancelOrder(Entities.Order pOrder)
+        public void CancelOrder(int pOrderId)
         {
             // TODO 
             using (TransactionScope lScope = new TransactionScope())
@@ -102,24 +99,35 @@ namespace BookStore.Business.Components
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
+                    Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
+
+                    if (lOrder == null) throw new Exception("Order does not exist"); // TODO throw better exceptions
+
                     try
                     {
-                        List<OrderItem> orderItems = pOrder.OrderItems.ToList<OrderItem>();
+                        List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
 
-                        lContainer.Orders.Remove(pOrder);
-
                         // ask the Bank service to transfer fundss
-                        TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
-                        DeleteDelivery(pOrder.OrderNumber.ToString());
+                        DeleteDelivery(lOrder.OrderNumber.ToString());
+
+                        lOrder.OrderItems.ToList().ForEach(o => { lContainer.Entry(o).State = System.Data.Entity.EntityState.Deleted; });
+                        lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
+                        lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
+                        lContainer.Orders.Remove(lOrder);
+
+                        // save the changes
+                        lContainer.SaveChanges();
+                        lScope.Complete();
                     }
                     catch (Exception lException)
                     {
-                        SendOrderErrorMessage(pOrder, lException);
+                        SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         throw;
                     }
@@ -243,7 +251,7 @@ namespace BookStore.Business.Components
 
             List<int> orderIds = orderItems.Select(o => o.Id).ToList<int>();
 
-            List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("OrderStock.Stock").Include("OrderStock.OrderItem")
+            List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("Stock").Include("OrderItem")
                                             where orderIds.Contains(OrderStock1.OrderItem.Id)
                                             select OrderStock1).ToList<OrderStock>();
 
@@ -257,9 +265,11 @@ namespace BookStore.Business.Components
                     continue;
                 }
 
-                stock.Quantity += orderStock.Quantity;
+                stock.Quantity = stock.Quantity.Value + orderStock.Quantity;
+                pContainer.Entry(orderStock).State = System.Data.Entity.EntityState.Deleted;
                 pContainer.OrderStocks.Remove(orderStock);
                 pContainer.Stocks.Attach(stock);
+                pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
             }
         }
     }

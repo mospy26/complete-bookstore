@@ -16,5 +16,8 @@ namespace BookStore.Services.Interfaces
 
         [OperationContract]
         List<int> GetOrders(int pUserId);
+
+        [OperationContract]
+        void CancelOrder(int pOrderId);
     }
 }
