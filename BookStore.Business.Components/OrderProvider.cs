@@ -29,7 +29,7 @@ namespace BookStore.Business.Components
             {
                 var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
                                        where Order1.Customer.Id == pUserId
-                                       select Order1).Select(order => order.Id).ToList<int>();
+                                       select Order1).Select(order => order.Id).Where(o => o == 0).ToList<int>();
                 lOrders.OrderBy(x => x);
                 return lOrders;
             }
@@ -91,9 +91,6 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
-            String customerEmail;
-            Guid orderNumber;
-            // TODO 
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -103,10 +100,9 @@ namespace BookStore.Business.Components
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
 
-                    customerEmail = lOrder.Customer.Email;
-                    orderNumber = lOrder.OrderNumber;
+                    if (lOrder == null) throw new OrderDoesNotExistException();
 
-                    if (lOrder == null) throw new Exception("Order does not exist"); // TODO throw better exceptions
+                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new Exception("Order has been delivered"); // TODO Better exceptions
 
                     try
                     {
@@ -138,7 +134,6 @@ namespace BookStore.Business.Components
                     }
                 }
             }
-            SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
@@ -186,44 +181,15 @@ namespace BookStore.Business.Components
             });
         }
 
-        private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
-        {
-            EmailProvider.SendMessage(new EmailMessage()
-            {
-                ToAddress = customerEmail,
-                Message = "Your order " + orderEmail + " has been cancelled"
-            });
-        }
-
-        private void GetDeliveryAddress(HashSet<String> pAddresses, Order pOrder)
-        {
-            foreach (OrderItem oi in pOrder.OrderItems)
-            {
-                foreach (OrderStock os in oi.OrderStocks)
-                {
-                    pAddresses.Add(os.Stock.Warehouse.Address.ToString());
-                }
-            }
-        }
-
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            HashSet<String> lAddress = new HashSet<String>();
-            GetDeliveryAddress(lAddress, pOrder);
-            String lSourceAddress = String.Join(", ", lAddress);
-
-            Delivery lDelivery = new Delivery() { 
-                DeliveryStatus = DeliveryStatus.Submitted, 
-                SourceAddress = lSourceAddress, 
-                DestinationAddress = pOrder.Customer.Address, 
-                Order = pOrder 
-            };
+            Delivery lDelivery = new Delivery() { DeliveryStatus = DeliveryStatus.Submitted, SourceAddress = "Book Store Address", DestinationAddress = pOrder.Customer.Address, Order = pOrder };
 
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(new DeliveryInfo()
             { 
-                OrderNumber = pOrder.OrderNumber.ToString(),  
-                SourceAddress = lSourceAddress,
-                DestinationAddress = pOrder.Customer.Address,
+                OrderNumber = lDelivery.Order.OrderNumber.ToString(),  
+                SourceAddress = lDelivery.SourceAddress,
+                DestinationAddress = lDelivery.DestinationAddress,
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
             });
 
@@ -239,7 +205,7 @@ namespace BookStore.Business.Components
             }
             catch
             {
-                throw new Exception("Error when transferring funds for order.");
+                throw new Exception("Error when transferring funds for order."); // TODO (provided code) better exception
             }
         }
 
@@ -251,7 +217,7 @@ namespace BookStore.Business.Components
             } 
             catch
             {
-                throw new Exception("Error transferring funds to customer");
+                throw new Exception("Error transferring funds to customer"); // TODO better exception
             }
         }
 
