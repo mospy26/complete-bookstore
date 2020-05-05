@@ -29,7 +29,7 @@ namespace BookStore.Business.Components
             {
                 var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
                                        where Order1.Customer.Id == pUserId
-                                       select Order1).Select(order => order.Id).Where(o => o == 0).ToList<int>();
+                                       select Order1).Select(order => order.Id).ToList<int>();
                 lOrders.OrderBy(x => x);
                 return lOrders;
             }
@@ -103,6 +103,9 @@ namespace BookStore.Business.Components
                     if (lOrder == null) throw new OrderDoesNotExistException();
 
                     if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new Exception("Order has been delivered"); // TODO Better exceptions
+
+                    customerEmail = lOrder.Customer.Email;
+                    orderNumber = lOrder.OrderNumber;
 
                     try
                     {
