@@ -91,6 +91,8 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
+            String customerEmail;
+            Guid orderNumber;
             // TODO 
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -100,6 +102,9 @@ namespace BookStore.Business.Components
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
+
+                    customerEmail = lOrder.Customer.Email;
+                    orderNumber = lOrder.OrderNumber;
 
                     if (lOrder == null) throw new Exception("Order does not exist"); // TODO throw better exceptions
 
@@ -133,6 +138,7 @@ namespace BookStore.Business.Components
                     }
                 }
             }
+            SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
@@ -177,6 +183,15 @@ namespace BookStore.Business.Components
             {
                 ToAddress = pOrder.Customer.Email,
                 Message = "Your order " + pOrder.OrderNumber + " has been placed"
+            });
+        }
+
+        private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
+        {
+            EmailProvider.SendMessage(new EmailMessage()
+            {
+                ToAddress = customerEmail,
+                Message = "Your order " + orderEmail + " has been cancelled"
             });
         }
 
