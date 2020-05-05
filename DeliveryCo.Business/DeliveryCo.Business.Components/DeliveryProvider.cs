@@ -50,7 +50,10 @@ namespace DeliveryCo.Business.Components
 
         private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
         {
-            Console.WriteLine("Delivering from " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
+            // Pick up notification
+            Console.WriteLine("Request to deliver from " + pDeliveryInfo.SourceAddress + ". Books ready for pick-up!");
+
+            Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
             Thread.Sleep(3000);
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())

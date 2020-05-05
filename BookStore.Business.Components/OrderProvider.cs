@@ -71,7 +71,7 @@ namespace BookStore.Business.Components
                         // ask the Bank service to transfer fundss
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
 
-                        // ask the delivery service to organise delivery
+                        // transfer was successful : ask the delivery service to organise delivery
                         PlaceDeliveryForOrder(pOrder);
 
                         // and save the order
@@ -210,6 +210,7 @@ namespace BookStore.Business.Components
 
         private void PlaceDeliveryForOrder(Order pOrder)
         {
+            // Notify DeliveryCo that books are ready to pick up
             HashSet<String> lAddress = new HashSet<String>();
             GetDeliveryAddress(lAddress, pOrder);
             String lSourceAddress = String.Join(" ", lAddress);
