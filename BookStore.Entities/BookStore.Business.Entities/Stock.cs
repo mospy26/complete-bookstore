@@ -17,8 +17,8 @@ namespace BookStore.Business.Entities
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Stock()
         {
-            this.Id = Guid.NewGuid();
             this.OrderStocks = new HashSet<OrderStock>();
+            this.Id = Guid.NewGuid();
         }
     
         public System.Guid Id { get; set; }
