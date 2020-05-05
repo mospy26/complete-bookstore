@@ -111,27 +111,27 @@ namespace BookStore.Process
                     };
 
                     Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 4);
-                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
-                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
-                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
+                    //Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
+                    //Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
+                    //Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
 
-                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 1);
-                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 5);
-                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 2);
-                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 4);
+                    //Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 1);
+                    //Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 5);
+                    //Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 2);
+                    //Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 4);
 
                     lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
 
                     lContainer.Stocks.Add(lGreatExpectationNeutralBayStock);
-                    lContainer.Stocks.Add(lGreatExpectationTheWarehouseStock);
-                    lContainer.Stocks.Add(lGreatExpectationStorageKingStock);
-                    lContainer.Stocks.Add(lGreatExpectationAmazonStock);
+                    //lContainer.Stocks.Add(lGreatExpectationTheWarehouseStock);
+                    //lContainer.Stocks.Add(lGreatExpectationStorageKingStock);
+                    //lContainer.Stocks.Add(lGreatExpectationAmazonStock);
 
-                    lContainer.Stocks.Add(lSoloistNeutralBayStock);
-                    lContainer.Stocks.Add(lSoloistStorageKingStock);
-                    lContainer.Stocks.Add(lSoloistTheWarehouseStock);
-                    lContainer.Stocks.Add(lSoloistAmazonStock);
+                    //lContainer.Stocks.Add(lSoloistNeutralBayStock);
+                    //lContainer.Stocks.Add(lSoloistStorageKingStock);
+                    //lContainer.Stocks.Add(lSoloistTheWarehouseStock);
+                    //lContainer.Stocks.Add(lSoloistAmazonStock);
 
                     //for (int i = 1; i < 10; i++)
                     //{

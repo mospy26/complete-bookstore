@@ -265,9 +265,11 @@ namespace BookStore.Business.Components
                     continue;
                 }
 
-                stock.Quantity += orderStock.Quantity;
+                stock.Quantity = stock.Quantity.Value + orderStock.Quantity;
+                pContainer.Entry(orderStock).State = System.Data.Entity.EntityState.Deleted;
                 pContainer.OrderStocks.Remove(orderStock);
                 pContainer.Stocks.Attach(stock);
+                pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
             }
         }
     }
