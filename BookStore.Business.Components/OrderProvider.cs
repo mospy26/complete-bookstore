@@ -91,6 +91,9 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
+            String customerEmail;
+            Guid orderNumber;
+            // TODO 
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -134,6 +137,7 @@ namespace BookStore.Business.Components
                     }
                 }
             }
+            SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
@@ -178,6 +182,15 @@ namespace BookStore.Business.Components
             {
                 ToAddress = pOrder.Customer.Email,
                 Message = "Your order " + pOrder.OrderNumber + " has been placed"
+            });
+        }
+
+        private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
+        {
+            EmailProvider.SendMessage(new EmailMessage()
+            {
+                ToAddress = customerEmail,
+                Message = "Your order " + orderEmail + " has been cancelled"
             });
         }
 
