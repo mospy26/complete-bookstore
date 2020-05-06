@@ -112,7 +112,7 @@ namespace BookStore.Business.Components
 
                     if (lOrder == null) throw new OrderDoesNotExistException();
 
-                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new Exception("Order has been delivered"); // TODO Better exceptions
+                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
 
                     customerEmail = lOrder.Customer.Email;
                     orderNumber = lOrder.OrderNumber;

@@ -1,0 +1,11 @@
+﻿@model BookStore.WebClient.ViewModels.OrderHasAlreadyBeenDeliveredViewModel
+
+@{
+    ViewBag.Title = "Order Already Delivered";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Order Has Been Delivered Already!</h2>
+
+The order with Id "@Model.OrderId" has already been delivered and cannot be cancelled. Please refresh your order items again.
+
