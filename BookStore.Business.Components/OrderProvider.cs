@@ -99,7 +99,7 @@ namespace BookStore.Business.Components
         {
             String customerEmail;
             Guid orderNumber;
-            // TODO 
+            
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
