@@ -38,6 +38,12 @@ namespace BookStore.WebClient.Controllers
             {
                 pCart.SubmitOrderAndClearCart(pUser);
             }
+            catch (FaultException<InsufficientStockFault> e) 
+            {
+                pCart.Clear();
+                pUser.UpdateUserCache();
+                return RedirectToAction("InsufficientStock", new { pItem = e.Detail.ItemName });
+            }
             catch
             {
                 pCart.Clear();

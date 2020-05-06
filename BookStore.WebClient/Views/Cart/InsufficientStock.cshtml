@@ -5,7 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Insufficient Stock</h2>
+<h2>Oops! Looks like we don't have the book titled "@Model.ItemName"</h2>
 
-There was insufficient stock for @Model.ItemName . Please modify your cart content and try again.
+<p>There was insufficient stock for the book with title "@Model.ItemName". </p>
+
+<p>We expect it to come in stock soon!</p>
+
+<p>Sorry for the inconvenience!</p>
 

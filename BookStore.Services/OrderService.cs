@@ -42,8 +42,9 @@ namespace BookStore.Services
             }
             catch(BookStore.Business.Entities.InsufficientStockException ise)
             {
+                Console.WriteLine(ise.ItemName);    
                 throw new FaultException<InsufficientStockFault>(
-                    new InsufficientStockFault() { ItemName = ise.ItemName });
+                    new InsufficientStockFault() { ItemName = ise.ItemName }, "Insufficient Stock, cannot make order");
             }
         }
 
@@ -55,7 +56,11 @@ namespace BookStore.Services
             } catch (BookStore.Business.Entities.OrderDoesNotExistException e)
             {
                 throw new FaultException<OrderDoesNotExistFault>(
-                    new OrderDoesNotExistFault() { OrderId = e.OrderId });
+                    new OrderDoesNotExistFault() { OrderId = e.OrderId }, "Order does not exist!");
+            } catch (BookStore.Business.Entities.OrderHasAlreadyBeenDeliveredException e)
+            {
+                throw new FaultException<OrderHasAlreadyBeenDeliveredFault>(
+                    new OrderHasAlreadyBeenDeliveredFault() { OrderId = e.OrderId }, "Your order has already been delivered!");
             }
         }
     }

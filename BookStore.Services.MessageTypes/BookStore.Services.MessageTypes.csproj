@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Faults\InsufficientStockFault.cs" />
     <Compile Include="Faults\OrderDoesNotExistFault.cs" />
+    <Compile Include="Faults\OrderHasAlreadyBeenDeliveredFault.cs" />
     <Compile Include="LoginCredential.cs" />
     <Compile Include="Book.cs" />
     <Compile Include="MessageType.cs" />
