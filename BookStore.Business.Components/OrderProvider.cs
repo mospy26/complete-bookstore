@@ -27,7 +27,7 @@ namespace BookStore.Business.Components
             using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
+                var lOrders = (from Order1 in lContainer.Orders.Include("Delivery")
                                where Order1.Customer.Id == pUserId
                                select Order1);
 
@@ -37,7 +37,6 @@ namespace BookStore.Business.Components
                 {
                     if (order.Delivery.DeliveryStatus == 0) lOrderIds.Add(order.Id);
                 }
-                lOrderIds.OrderBy(x => x);
                 return lOrderIds;
             }
         }
@@ -100,7 +99,7 @@ namespace BookStore.Business.Components
         {
             String customerEmail;
             Guid orderNumber;
-            // TODO 
+            
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
