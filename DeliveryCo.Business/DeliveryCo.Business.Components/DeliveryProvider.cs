@@ -20,7 +20,6 @@ namespace DeliveryCo.Business.Components
             {
                 try
                 {
-
                     DeliveryInfo deleteDelivery = lContainer.DeliveryInfo.Where<DeliveryInfo>(s => s.OrderNumber.Equals(OrderNumber)).First();
                     lContainer.DeliveryInfo.Remove(deleteDelivery);
                     return true;
@@ -53,8 +52,20 @@ namespace DeliveryCo.Business.Components
             // Pick up notification
             Console.WriteLine("Request to deliver from " + pDeliveryInfo.SourceAddress + ". Books ready for pick-up!");
 
-            Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
+            //notify received request
+
             Thread.Sleep(3000);
+
+            // notify goods have been picked up
+
+            Thread.Sleep(3000);
+
+            //notify that goods are on their way
+
+            Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
+
+            // notify order is completed
+
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())
             using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())

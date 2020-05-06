@@ -28,10 +28,17 @@ namespace BookStore.Business.Components
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 var lOrders = (from Order1 in lContainer.Orders.Include("Delivery").Include("Customer")
-                                       where Order1.Customer.Id == pUserId
-                                       select Order1).Select(order => order.Id).ToList<int>();
-                lOrders.OrderBy(x => x);
-                return lOrders;
+                               where Order1.Customer.Id == pUserId
+                               select Order1);
+
+                List<int> lOrderIds = new List<int>();
+
+                foreach (Order order in lOrders)
+                {
+                    if (order.Delivery.DeliveryStatus == 0) lOrderIds.Add(order.Id);
+                }
+                lOrderIds.OrderBy(x => x);
+                return lOrderIds;
             }
         }
 
@@ -298,10 +305,7 @@ namespace BookStore.Business.Components
                 Stock stock = pContainer.Stocks.SingleOrDefault(r => r.Id == orderStock.Stock.Id);
 
                 // the item was not chosen - should never reach this case but in case
-                if (stock == null)
-                {
-                    continue;
-                }
+                if (stock == null) continue;
 
                 stock.Quantity = stock.Quantity.Value + orderStock.Quantity;
                 pContainer.Entry(orderStock).State = System.Data.Entity.EntityState.Deleted;
