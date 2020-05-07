@@ -52,19 +52,19 @@ namespace DeliveryCo.Business.Components
             // Pick up notification
             Console.WriteLine("Request to deliver from " + pDeliveryInfo.SourceAddress + ". Books ready for pick-up!");
 
-            //notify received request
+            //notify received request - send a request to the BookStore stating that you have received the request
 
             Thread.Sleep(3000);
 
-            // notify goods have been picked up
+            // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
 
             Thread.Sleep(3000);
 
-            //notify that goods are on their way
+            //notify that goods are on their way - tell the BookStore that books are on the way
 
             Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
 
-            // notify order is completed
+            // notify order is completed - tell the BookStore that the books have been delivered
 
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())
