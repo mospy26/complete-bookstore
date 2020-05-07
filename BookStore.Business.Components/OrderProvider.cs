@@ -210,7 +210,7 @@ namespace BookStore.Business.Components
         {
             HashSet<String> lAddress = new HashSet<String>();
             GetDeliveryAddress(lAddress, pOrder);
-            String lSourceAddress = String.Join(" ", lAddress);
+            String lSourceAddress = String.Join(", ", lAddress);
 
             Delivery lDelivery = new Delivery() { 
                 DeliveryStatus = DeliveryStatus.Submitted, 
