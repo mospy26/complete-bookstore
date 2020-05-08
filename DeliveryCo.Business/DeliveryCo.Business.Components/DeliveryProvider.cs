@@ -32,7 +32,7 @@ namespace DeliveryCo.Business.Components
 
         }
 
-        public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo)
+        public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
             using(TransactionScope lScope = new TransactionScope())
             using(DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
@@ -41,13 +41,13 @@ namespace DeliveryCo.Business.Components
                 pDeliveryInfo.Status = 0;
                 lContainer.DeliveryInfo.Add(pDeliveryInfo);
                 lContainer.SaveChanges();
-                ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo)));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo, pOrderItems)));
                 lScope.Complete();
             }
             return pDeliveryInfo.DeliveryIdentifier;
         }
 
-        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
+        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
             // Pick up notification
             Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
@@ -55,6 +55,19 @@ namespace DeliveryCo.Business.Components
             //notify received request - send a request to the BookStore stating that you have received the request
 
             Thread.Sleep(3000);
+
+            Console.WriteLine("Delivering to" + pDeliveryInfo.DestinationAddress);
+            Console.WriteLine();
+
+            foreach (Tuple<string, List<String>> e in pOrderItems)
+            {
+                Console.WriteLine("Book " + e.Item1 + " dispatching from warehouses:");
+                foreach (String f in e.Item2)
+                {
+                    Console.WriteLine(f);
+                }
+                Console.WriteLine();
+            }
 
             // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
 

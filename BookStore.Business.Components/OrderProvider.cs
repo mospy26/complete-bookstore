@@ -7,6 +7,9 @@ using BookStore.Business.Entities;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
+using System.Collections;
+using System.ServiceModel;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace BookStore.Business.Components
 {
@@ -228,13 +231,32 @@ namespace BookStore.Business.Components
                 Order = pOrder 
             };
 
-            Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(new DeliveryInfo()
-            { 
-                OrderNumber = pOrder.OrderNumber.ToString(),  
-                SourceAddress = lSourceAddress,
-                DestinationAddress = pOrder.Customer.Address,
+            // ArrayList<String, ArrayList<String>>
+            OrderInfo lOrderInfo = new OrderInfo();
+
+            foreach (OrderItem oi in pOrder.OrderItems)
+            {
+                String lBookTitle = oi.Book.Title;
+                List<String> lWarehouses = new List<String>();
+
+                foreach (OrderStock os in oi.OrderStocks)
+                {
+                    lWarehouses.Add(os.Stock.Warehouse.Name);
+                }
+                lOrderInfo.AddOrderItem(lBookTitle, lWarehouses);
+            }
+
+
+            DeliveryInfo lDeliveryInfo = new DeliveryInfo()
+            {
+                OrderNumber = lDelivery.Order.OrderNumber.ToString(),
+                SourceAddress = lDelivery.SourceAddress,
+                DestinationAddress = lDelivery.DestinationAddress,
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
-            });
+            };
+
+
+            Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(lDeliveryInfo, lOrderInfo);
 
             lDelivery.ExternalDeliveryIdentifier = lDeliveryIdentifier;
             pOrder.Delivery = lDelivery;   
