@@ -33,7 +33,7 @@ namespace DeliveryCo.Business.Components
 
         }
 
-        public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo)
+        public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
             using(TransactionScope lScope = new TransactionScope())
             using(DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
@@ -42,15 +42,27 @@ namespace DeliveryCo.Business.Components
                 pDeliveryInfo.Status = 0;
                 lContainer.DeliveryInfo.Add(pDeliveryInfo);
                 lContainer.SaveChanges();
-                ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo)));
+                ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo, pOrderItems)));
                 lScope.Complete();
             }
             return pDeliveryInfo.DeliveryIdentifier;
         }
 
-        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
+        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
             Console.WriteLine("Delivering to" + pDeliveryInfo.DestinationAddress);
+            Console.WriteLine();
+
+            foreach (Tuple<string, List<String>> e in pOrderItems)
+            {
+                Console.WriteLine("Book " + e.Item1 + " dispatching from warehouses:");
+                foreach (String f in e.Item2)
+                {
+                    Console.WriteLine(f);
+                }
+                Console.WriteLine();
+            }
+
             Thread.Sleep(100000);
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())
