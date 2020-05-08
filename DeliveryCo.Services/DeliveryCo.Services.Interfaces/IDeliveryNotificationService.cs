@@ -15,9 +15,9 @@ namespace DeliveryCo.Services.Interfaces
         void NotifyDeliveryCompletion(Guid pDeliveryId, DeliveryInfoStatus status);
 
         [OperationContract]
-        void NotifyPickedUpOrder(Guid pDeliveryId);
+        bool NotifyPickedUpOrder(Guid pDeliveryId);
 
         [OperationContract]
-        void NotifyOnDeliveryTruckOrder(Guid pDeliveryId);
+        bool NotifyOnDeliveryTruckOrder(Guid pDeliveryId);
     }
 }

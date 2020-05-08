@@ -11,8 +11,8 @@ namespace BookStore.Business.Components.Interfaces
 
         void NotifyDeliveryCompletion(Guid pDeliveryId, DeliveryStatus status);
 
-        void NotifyPickedUpOrder(Guid pDeliveryId);
+        bool NotifyPickedUpOrder(Guid pDeliveryId);
 
-        void NotifyOnDeliveryTruckOrder(Guid pDeliveryId);
+        bool NotifyOnDeliveryTruckOrder(Guid pDeliveryId);
     }
 }

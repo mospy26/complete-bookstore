@@ -22,14 +22,14 @@ namespace BookStore.Services
             Provider.NotifyDeliveryCompletion(pDeliveryId, GetDeliveryStatusFromDeliveryInfoStatus(status));
         }
 
-        public void NotifyPickedUpOrder(Guid pDeliveryId)
+        public bool NotifyPickedUpOrder(Guid pDeliveryId)
         {
-            Provider.NotifyPickedUpOrder(pDeliveryId);
+            return Provider.NotifyPickedUpOrder(pDeliveryId);
         }
 
-        public void NotifyOnDeliveryTruckOrder(Guid pDeliveryId)
+        public bool NotifyOnDeliveryTruckOrder(Guid pDeliveryId)
         {
-            Provider.NotifyOnDeliveryTruckOrder(pDeliveryId);
+            return Provider.NotifyOnDeliveryTruckOrder(pDeliveryId);
         }
 
         private DeliveryStatus GetDeliveryStatusFromDeliveryInfoStatus(DeliveryInfoStatus status)

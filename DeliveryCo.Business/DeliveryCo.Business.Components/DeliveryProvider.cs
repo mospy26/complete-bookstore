@@ -60,13 +60,21 @@ namespace DeliveryCo.Business.Components
             // notify goods have been picked up
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " has been picked up");
 
+            bool lEmailResult = true;
             using (TransactionScope lScope = new TransactionScope())
             using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
             {
                 IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
-                lService.NotifyPickedUpOrder(pDeliveryInfo.DeliveryIdentifier);
+                lEmailResult = lService.NotifyPickedUpOrder(pDeliveryInfo.DeliveryIdentifier);
             }
 
+            // Order got cancelled
+            if (!lEmailResult)
+            {
+                Console.WriteLine("Delivery number " + pDeliveryInfo.DeliveryIdentifier + " was cancelled by the customer.");
+                ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Delivery number " + pDeliveryInfo.DeliveryIdentifier + " was cancelled by the customer.");
+                return;
+            }
 
             Thread.Sleep(3000);
 
@@ -77,9 +85,16 @@ namespace DeliveryCo.Business.Components
             using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
             {
                 IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
-                lService.NotifyOnDeliveryTruckOrder(pDeliveryInfo.DeliveryIdentifier);
+                lEmailResult = lService.NotifyOnDeliveryTruckOrder(pDeliveryInfo.DeliveryIdentifier);
             }
 
+            // Order got cancelled
+            if (!lEmailResult)
+            {
+                Console.WriteLine("Delivery number " + pDeliveryInfo.DeliveryIdentifier + " was cancelled by the customer.");
+                ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Delivery number " + pDeliveryInfo.DeliveryIdentifier + " was cancelled by the customer.");
+                return;
+            }
 
             Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
 
