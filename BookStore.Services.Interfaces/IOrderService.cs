@@ -21,5 +21,8 @@ namespace BookStore.Services.Interfaces
         [FaultContract(typeof(OrderDoesNotExistFault))]
         [FaultContract(typeof(OrderHasAlreadyBeenDeliveredFault))]
         void CancelOrder(int pOrderId);
+
+        [OperationContract]
+        void GetNotificationFromDeliveryCo(String message);
     }
 }

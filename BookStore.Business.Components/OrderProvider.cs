@@ -313,5 +313,10 @@ namespace BookStore.Business.Components
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
             }
         }
+
+        public void NotifyMessage(String message)
+        {
+            Console.WriteLine("Yay");
+        }
     }
 }
