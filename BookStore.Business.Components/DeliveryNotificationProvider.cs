@@ -15,6 +15,28 @@ namespace BookStore.Business.Components
         {
             get { return ServiceLocator.Current.GetInstance<IEmailProvider>(); }
         }
+        
+        public void NotifyPickedUpOrder(Guid pDeliveryId)
+        {
+            Order lAffectedOrder = RetrieveDeliveryOrder(pDeliveryId);
+
+            EmailProvider.SendMessage(new EmailMessage()
+            {
+                ToAddress = lAffectedOrder.Customer.Email,
+                Message = "Your order " + lAffectedOrder.OrderNumber + " has been picked up and should be delivered soon!"
+            });
+        }
+
+        public void NotifyOnDeliveryTruckOrder(Guid pDeliveryId)
+        {
+            Order lAffectedOrder = RetrieveDeliveryOrder(pDeliveryId);
+
+            EmailProvider.SendMessage(new EmailMessage()
+            {
+                ToAddress = lAffectedOrder.Customer.Email,
+                Message = "Your order " + lAffectedOrder.OrderNumber + " is on the delivery truck and on its way!"
+            });
+        }
 
         public void NotifyDeliveryCompletion(Guid pDeliveryId, Entities.DeliveryStatus status)
         {

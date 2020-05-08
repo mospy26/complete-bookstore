@@ -52,18 +52,34 @@ namespace DeliveryCo.Business.Components
             // Pick up notification
             Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
-            //notify received request - send a request to the BookStore stating that you have received the request
+            // notify received request
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Received request to deliver books from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
             Thread.Sleep(3000);
 
-            // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
+            // notify goods have been picked up
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " has been picked up");
+
+            using (TransactionScope lScope = new TransactionScope())
+            using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
+            {
+                IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
+                lService.NotifyPickedUpOrder(pDeliveryInfo.DeliveryIdentifier);
+            }
+
 
             Thread.Sleep(3000);
 
-            //notify that goods are on their way - tell the BookStore that books are on the way
+            // notify that goods are on their way
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number " + pDeliveryInfo.DeliveryIdentifier + " are on their way to the customer at address " + pDeliveryInfo.DestinationAddress);
+
+            using (TransactionScope lScope = new TransactionScope())
+            using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
+            {
+                IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
+                lService.NotifyOnDeliveryTruckOrder(pDeliveryInfo.DeliveryIdentifier);
+            }
+
 
             Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
 
@@ -76,7 +92,7 @@ namespace DeliveryCo.Business.Components
                 lService.NotifyDeliveryCompletion(pDeliveryInfo.DeliveryIdentifier, DeliveryInfoStatus.Delivered);
             }
 
-            // notify order is completed to the BookStore that the books have been delivered after sending the customer an email
+            // notify order is completed to the BookStore
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " were delivered successfully!");
         }
     }
