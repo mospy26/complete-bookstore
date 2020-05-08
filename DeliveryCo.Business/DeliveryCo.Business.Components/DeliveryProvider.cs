@@ -53,18 +53,19 @@ namespace DeliveryCo.Business.Components
             Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
             //notify received request - send a request to the BookStore stating that you have received the request
+            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Received request to deliver books from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
             Thread.Sleep(3000);
 
             // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
+            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " has been picked up");
 
             Thread.Sleep(3000);
 
             //notify that goods are on their way - tell the BookStore that books are on the way
+            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number " + pDeliveryInfo.DeliveryIdentifier + " are on their way to the customer at address " + pDeliveryInfo.DestinationAddress);
 
             Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
-
-            // notify order is completed - tell the BookStore that the books have been delivered
 
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())
@@ -75,6 +76,8 @@ namespace DeliveryCo.Business.Components
                 lService.NotifyDeliveryCompletion(pDeliveryInfo.DeliveryIdentifier, DeliveryInfoStatus.Delivered);
             }
 
+            // notify order is completed to the BookStore that the books have been delivered after sending the customer an email
+            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " were delivered successfully!");
         }
     }
 }

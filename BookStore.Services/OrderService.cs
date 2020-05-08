@@ -63,5 +63,10 @@ namespace BookStore.Services
                     new OrderHasAlreadyBeenDeliveredFault() { OrderId = e.OrderId }, "Your order has already been delivered!");
             }
         }
+
+        public void GetNotificationFromDeliveryCo(String message)
+        {
+            Console.WriteLine(message);
+        }
     }
 }

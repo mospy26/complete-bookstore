@@ -63,9 +63,19 @@
   <ItemGroup>
     <Compile Include="DeliveryNotificationServiceFactory.cs" />
     <Compile Include="DeliveryProvider.cs" />
+    <Compile Include="ExternalServiceFactory.cs" />
+    <Compile Include="OrderProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BookStore.Business.Components.Interfaces\BookStore.Business.Components.Interfaces.csproj">
+      <Project>{2851CEF3-00F9-4AFB-9306-0D6E0BDD45E3}</Project>
+      <Name>BookStore.Business.Components.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BookStore.Services.Interfaces\BookStore.Services.Interfaces.csproj">
+      <Project>{17197901-BBE3-48E8-AC98-689AB9A7ED1E}</Project>
+      <Name>BookStore.Services.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\DeliveryCo.Services\DeliveryCo.Services.Interfaces\DeliveryCo.Services.Interfaces.csproj">
       <Project>{7E7A8D7D-87CF-420F-A72B-8F4A258BB48A}</Project>
       <Name>DeliveryCo.Services.Interfaces</Name>
