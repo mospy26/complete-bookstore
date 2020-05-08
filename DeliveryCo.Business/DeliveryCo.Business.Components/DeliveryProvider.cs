@@ -47,10 +47,10 @@ namespace DeliveryCo.Business.Components
             return pDeliveryInfo.DeliveryIdentifier;
         }
 
-        private vo id ScheduleDelivery(DeliveryInfo pDeliveryInfo)
+        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
         {
             // Pick up notification
-            Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
+            Console.WriteLine("Request to deliver from " + pDeliveryInfo.SourceAddress + ". Books ready for pick-up!");
 
             //notify received request - send a request to the BookStore stating that you have received the request
 
