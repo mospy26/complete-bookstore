@@ -50,7 +50,7 @@ namespace DeliveryCo.Business.Components
         private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
         {
             // Pick up notification
-            Console.WriteLine("Request to deliver from " + pDeliveryInfo.SourceAddress + ". Books ready for pick-up!");
+            Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
             //notify received request - send a request to the BookStore stating that you have received the request
 

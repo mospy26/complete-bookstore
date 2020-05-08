@@ -219,7 +219,7 @@ namespace BookStore.Business.Components
             // Notify DeliveryCo that books are ready to pick up
             HashSet<String> lAddress = new HashSet<String>();
             GetDeliveryAddress(lAddress, pOrder);
-            String lSourceAddress = String.Join(" ", lAddress);
+            String lSourceAddress = String.Join(", ", lAddress);
 
             Delivery lDelivery = new Delivery() { 
                 DeliveryStatus = DeliveryStatus.Submitted, 
