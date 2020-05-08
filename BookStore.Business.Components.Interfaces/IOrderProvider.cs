@@ -13,8 +13,5 @@ namespace BookStore.Business.Components.Interfaces
         void CancelOrder(int pOrderId);
 
         List<int> GetOrders(int pUserId);
-
-        [OperationContract]
-        void NotifyMessage(String message);
     }
 }
