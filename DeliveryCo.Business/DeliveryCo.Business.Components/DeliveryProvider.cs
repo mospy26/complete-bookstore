@@ -58,7 +58,7 @@ namespace DeliveryCo.Business.Components
             Thread.Sleep(3000);
 
             // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
-            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delovery number: " + pDeliveryInfo.DeliveryIdentifier + " has been picked up");
+            ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Books for delivery number: " + pDeliveryInfo.DeliveryIdentifier + " has been picked up");
 
             Thread.Sleep(3000);
 
