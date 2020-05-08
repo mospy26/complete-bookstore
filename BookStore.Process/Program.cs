@@ -114,6 +114,14 @@ namespace BookStore.Process
                         Title = "Grape Expectations"
                     };
 
+                    Book lNoBook = new Book() // 1 5 2 4 
+                    {
+                        Author = "No Book",
+                        Genre = "Fiction",
+                        Price = 10.0,
+                        Title = "No Book"
+                    };
+
                     Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 4);
                     Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
                     Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
@@ -126,6 +134,7 @@ namespace BookStore.Process
 
                     lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
+                    lContainer.Books.Add(lNoBook);
 
                     lContainer.Stocks.Add(lGreatExpectationNeutralBayStock);
                     lContainer.Stocks.Add(lGreatExpectationTheWarehouseStock);

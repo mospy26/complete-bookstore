@@ -19,6 +19,13 @@ namespace BookStore.Business.Components
         public void NotifyDeliveryCompletion(Guid pDeliveryId, Entities.DeliveryStatus status)
         {
             Order lAffectedOrder = RetrieveDeliveryOrder(pDeliveryId);
+
+            // Delivery was deleted due to order cancellation
+            if (lAffectedOrder == null)
+            {
+                return;
+            }
+
             UpdateDeliveryStatus(pDeliveryId, status);
             if (status == Entities.DeliveryStatus.Delivered)
             {
@@ -58,8 +65,9 @@ namespace BookStore.Business.Components
  	        using(BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 Delivery lDelivery =  lContainer.Deliveries.Include("Order.Customer").Where((pDel) => pDel.ExternalDeliveryIdentifier == pDeliveryId).FirstOrDefault();
-                
-                if (lDelivery == null) throw new Exception("Order was cancelled!"); // TODO Better exceptions
+
+                // Order was cancelled
+                if (lDelivery == null) return null;
                 
                 return lDelivery.Order;
             }

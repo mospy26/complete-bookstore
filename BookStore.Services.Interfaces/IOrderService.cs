@@ -18,6 +18,8 @@ namespace BookStore.Services.Interfaces
         List<int> GetOrders(int pUserId);
 
         [OperationContract]
+        [FaultContract(typeof(OrderDoesNotExistFault))]
+        [FaultContract(typeof(OrderHasAlreadyBeenDeliveredFault))]
         void CancelOrder(int pOrderId);
     }
 }

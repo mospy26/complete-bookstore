@@ -21,7 +21,7 @@ namespace BookStore.Business.Entities
                 // Not enough stock
                 if (lTotalStock.Value < lTotalQuantity)
                 {
-                    throw new Exception("Cannot place an order - This book is out of stock");
+                    throw new InsufficientStockException() { ItemName = lItem.Book.Title };
                 }
 
                 // There is stock

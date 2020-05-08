@@ -88,6 +88,8 @@
     <Compile Include="Order.cs">
       <DependentUpon>BookStoreEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrderDoesNotExistException.cs" />
+    <Compile Include="OrderHasAlreadyBeenDeliveredException.cs" />
     <Compile Include="OrderItem.cs">
       <DependentUpon>BookStoreEntityModel.tt</DependentUpon>
     </Compile>

@@ -1,0 +1,11 @@
+﻿@model BookStore.WebClient.ViewModels.OrderDoesNotExistViewModel
+
+@{
+    ViewBag.Title = "Order Does Not Exist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Order does not exist in our system!</h2>
+
+<p>The order with Id "@Model.OrderId" which you are trying to cancel does not exist in our system!</p>
+

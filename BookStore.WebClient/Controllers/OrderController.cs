@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BookStore.WebClient.ViewModels;
+using BookStore.Services.MessageTypes;
+using System.ServiceModel;
 
 namespace BookStore.WebClient.Controllers
 {
@@ -19,10 +21,31 @@ namespace BookStore.WebClient.Controllers
 
         public ActionResult DeleteOrder(int pOrderId, String pReturnUrl, UserCache pUserCache)
         {
-            // Do Something 
-            ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
+            try
+            {
+                ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
+            }
+            catch (FaultException<OrderHasAlreadyBeenDeliveredFault> e)
+            {
+                return RedirectToAction("OrderHasAlreadyBeenDelivered", new { pOrderId = e.Detail.OrderId });
+            }
+            catch (FaultException<OrderDoesNotExistFault> e)
+            {
+                return RedirectToAction("OrderDoesNotExist", new { pOrderId = e.Detail.OrderId });
+            }
 
             return RedirectToAction("Index", new { pUserCache = pUserCache });
         }
+
+        public ActionResult OrderHasAlreadyBeenDelivered(int pOrderId)
+        {
+            return View(new OrderHasAlreadyBeenDeliveredViewModel(pOrderId));
+        }
+
+        public ActionResult OrderDoesNotExist(int pOrderId)
+        {
+            return View(new OrderDoesNotExistViewModel(pOrderId));
+        }
+
     }
 }

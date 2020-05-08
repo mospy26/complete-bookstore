@@ -20,7 +20,6 @@ namespace DeliveryCo.Business.Components
             {
                 try
                 {
-
                     DeliveryInfo deleteDelivery = lContainer.DeliveryInfo.Where<DeliveryInfo>(s => s.OrderNumber.Equals(OrderNumber)).First();
                     lContainer.DeliveryInfo.Remove(deleteDelivery);
                     return true;
@@ -48,10 +47,25 @@ namespace DeliveryCo.Business.Components
             return pDeliveryInfo.DeliveryIdentifier;
         }
 
-        private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
+        private vo id ScheduleDelivery(DeliveryInfo pDeliveryInfo)
         {
-            Console.WriteLine("Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
+            // Pick up notification
+            Console.WriteLine("Request for delivering items received! Delivering from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
+
+            //notify received request - send a request to the BookStore stating that you have received the request
+
             Thread.Sleep(3000);
+
+            // notify goods have been picked up - send a request to the BookStore stating that you have picked up the books from those Warehouses
+
+            Thread.Sleep(3000);
+
+            //notify that goods are on their way - tell the BookStore that books are on the way
+
+            Console.WriteLine("Delivering to " + pDeliveryInfo.DestinationAddress);
+
+            // notify order is completed - tell the BookStore that the books have been delivered
+
             //notifying of delivery completion
             using (TransactionScope lScope = new TransactionScope())
             using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
