@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ServiceModel;
 using DeliveryCo.MessageTypes;
+using System.Collections;
 
 namespace DeliveryCo.Services.Interfaces
 {
@@ -12,7 +13,7 @@ namespace DeliveryCo.Services.Interfaces
     {
         [OperationContract]
         [TransactionFlow(TransactionFlowOption.Allowed)]
-        Guid SubmitDelivery(DeliveryInfo pDeliveryInfo);
+        Guid SubmitDelivery(DeliveryInfo pDeliveryInfo, OrderInfo pOrderItemToWarehouses);
 
         [OperationContract]
         Boolean DeleteDelivery(String OrderNumber);
