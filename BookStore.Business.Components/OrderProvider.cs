@@ -247,6 +247,22 @@ namespace BookStore.Business.Components
             }
 
 
+            // ArrayList<String, ArrayList<String>>
+            OrderInfo lOrderInfo = new OrderInfo();
+
+            foreach (OrderItem oi in pOrder.OrderItems)
+            {
+                String lBookTitle = oi.Book.Title;
+                List<String> lWarehouses = new List<String>();
+
+                foreach (OrderStock os in oi.OrderStocks)
+                {
+                    lWarehouses.Add(os.Stock.Warehouse.Name);
+                }
+                lOrderInfo.AddOrderItem(lBookTitle, lWarehouses);
+            }
+
+
             DeliveryInfo lDeliveryInfo = new DeliveryInfo()
             {
                 OrderNumber = lDelivery.Order.OrderNumber.ToString(),
