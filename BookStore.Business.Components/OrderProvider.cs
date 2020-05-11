@@ -230,7 +230,6 @@ namespace BookStore.Business.Components
                 DestinationAddress = pOrder.Customer.Address, 
                 Order = pOrder 
             };
-
             // ArrayList<String, ArrayList<String>>
             OrderInfo lOrderInfo = new OrderInfo();
 
