@@ -55,7 +55,7 @@ namespace BookStore.Business.Components
                         }
 
                         // Else get the optimal warehouse
-                        LoadOptimalWarehouseStocks(pOrder);
+                        List<Tuple<Stock, OrderItem, int>> lists = LoadOptimalWarehouseStocks(pOrder);
                         
                         // and update the stock levels
                         //pOrder.UpdateStockLevels();
@@ -99,10 +99,12 @@ namespace BookStore.Business.Components
         // Greedy algorithm...
         // NOT OPTIMAL
         // But finds a decent solution
-        private void LoadOptimalWarehouseStocks(Order pOrder)
+        private List<Tuple<Stock, OrderItem, int>> LoadOptimalWarehouseStocks(Order pOrder)
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
+                List<Tuple<Stock, OrderItem, int>> stocks = new List<Tuple<Stock, OrderItem, int>>();
+
                 // Warehosue and their total stocks
                 List<Tuple<Warehouse, int>> lWarehouses = new List<Tuple<Warehouse, int>>();
                 foreach (Warehouse w in lContainer.Warehouses)
@@ -166,7 +168,12 @@ namespace BookStore.Business.Components
 
                     // NEW IDEA: pass in the warehouse as a parameter into update stock
                     // AND do this shit in there...
-                    pOrder.UpdateStockLevels(warehouseUsed);
+                    List<Tuple<Stock, OrderItem, int>> orderList = pOrder.UpdateStockLevels(warehouseUsed);
+
+                    foreach(Tuple<Stock, OrderItem, int> tupleItem in orderList)
+                    {
+                        stocks.Add(tupleItem);
+                    }
 
                     // Check if all order items are 0...
                     satisfy = true;
@@ -182,6 +189,7 @@ namespace BookStore.Business.Components
                 //{
                 //    lOrderItem.Book.Stocks = lContainer.Stocks.Where((pStock) => pStock.Book.Id == lOrderItem.Book.Id).ToList<Stock>();    
                 //}
+                return stocks;
             }
         }
 

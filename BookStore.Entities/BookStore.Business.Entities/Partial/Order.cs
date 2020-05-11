@@ -24,9 +24,9 @@ namespace BookStore.Business.Entities
             return true;
         }
 
-        public void UpdateStockLevels(Warehouse ware)
+        public List<Tuple<Stock, OrderItem, int>> UpdateStockLevels(Warehouse ware)
         {
-
+            List<Tuple<Stock, OrderItem, int>> lStocks = new List<Tuple<Stock, OrderItem, int>>();
             // TODO Warehouse stuff
             foreach (OrderItem lItem in this.OrderItems)
             {
@@ -50,11 +50,13 @@ namespace BookStore.Business.Entities
                     {
                         if(lStock.Quantity < lItem.Quantity)
                         {
+                            lStocks.Add(new Tuple<Stock, OrderItem, int>(lStock, lItem, lStock.Quantity.Value));
                             lItem.Quantity -= (int)lStock.Quantity;
                             lStock.Quantity = 0;
                         }
                         else
                         {
+                            lStocks.Add(new Tuple<Stock, OrderItem, int>(lStock, lItem, lItem.Quantity));
                             lStock.Quantity -= lItem.Quantity;
                             lItem.Quantity = 0;
                         }
@@ -89,6 +91,7 @@ namespace BookStore.Business.Entities
                 //    }
                 //}
             }
+            return lStocks;
         }
     }
 }
