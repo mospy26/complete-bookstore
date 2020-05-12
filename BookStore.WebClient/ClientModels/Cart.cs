@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using BookStore.Services.MessageTypes;
+using BookStore.WebClient.ViewModels;
 
 namespace BookStore.WebClient.ClientModels
 {
@@ -47,9 +49,14 @@ namespace BookStore.WebClient.ClientModels
             }
             lOrder.Total = Convert.ToDouble(ComputeTotalValue());
 
-            ServiceFactory.Instance.OrderService.SubmitOrder(lOrder);
+            ThreadPool.QueueUserWorkItem(o => SubmitOrderRunnable(lOrder));
             pUserCache.UpdateUserCache();
             Clear();
+        }
+
+        public void SubmitOrderRunnable(Order pOrder)
+        {
+            ServiceFactory.Instance.OrderService.SubmitOrder(pOrder);
         }
 
         public void RemoveLine(Book pBook)
