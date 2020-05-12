@@ -247,6 +247,8 @@
     <Content Include="Views\Order\Index.cshtml" />
     <Content Include="Views\Order\OrderHasAlreadyBeenDelivered.cshtml" />
     <Content Include="Views\Order\OrderDoesNotExist.cshtml" />
+    <Content Include="Views\Cart\BankAccountError.cshtml" />
+    <Content Include="Views\Cart\InsufficientAmount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

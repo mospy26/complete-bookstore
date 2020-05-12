@@ -52,6 +52,10 @@ namespace BookStore.WebClient.ClientModels
             ThreadPool.QueueUserWorkItem(o => SubmitOrderRunnable(lOrder));
             pUserCache.UpdateUserCache();
             Clear();
+            if (!result.Equals("Order Submitted"))
+            {
+                throw new Exception(result);
+            }
         }
 
         public void SubmitOrderRunnable(Order pOrder)
