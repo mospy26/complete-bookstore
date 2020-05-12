@@ -11,7 +11,7 @@
     <tr>
         <th></th>
     </tr>
-    @foreach (var item in Model.Items)
+    @foreach (var item in Model.ItemsByOffset)
     {
         <tr>
             <td>
@@ -19,14 +19,21 @@
                 Price: $@item.Price |
                 Quantity: @item.StockCount
 
-                @using(Html.BeginForm("AddToCart", "Cart")) { 
-                    @Html.Hidden("pBookId", item.Id) 
+                @using (Html.BeginForm("AddToCart", "Cart"))
+                {
+                    @Html.Hidden("pBookId", item.Id)
                     @Html.Hidden("pReturnUrl", ViewContext.HttpContext.Request.Url.PathAndQuery)
                     <input type="submit" value="+ Add to Cart" />
-                } 
+                }
             </td>
         </tr>
     }
 
 </table>
 
+
+<h1></h1>
+@for (int i = 1; i < Model.SizeOfPagination + 1; i++)
+{
+    <input type="button" value=@i onclick="location.href='@Url.Action("ListBooks", "Store", new { pPageNumber = i} )'" />
+}

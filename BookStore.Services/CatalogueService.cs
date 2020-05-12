@@ -39,5 +39,10 @@ namespace BookStore.Services
                 CatalogueProvider.GetBookById(pId));
             return external;
         }
+
+        public int GetTotalBooks()
+        {
+            return CatalogueProvider.GetTotalBooks();
+        }
     }
 }

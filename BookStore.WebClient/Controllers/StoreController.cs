@@ -15,9 +15,10 @@ namespace BookStore.WebClient.Controllers
             return View();
         }
 
-        public ActionResult ListBooks()
+        public ActionResult ListBooks(int? pPageNumber)
         {
-            return View(new CatalogueViewModel());
+            pPageNumber = pPageNumber != null ? pPageNumber - 1 : 0;
+            return View(new CatalogueViewModel(pPageNumber ?? 0));
         }
     }
 }

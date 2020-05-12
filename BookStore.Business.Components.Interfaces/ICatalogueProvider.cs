@@ -10,5 +10,7 @@ namespace BookStore.Business.Components.Interfaces
     {
         List<Business.Entities.Book> GetBook(int pOffset, int pCount);
         Book GetBookById(int pId);
+
+        int GetTotalBooks();
     }
 }
