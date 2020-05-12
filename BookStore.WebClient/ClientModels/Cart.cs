@@ -47,9 +47,13 @@ namespace BookStore.WebClient.ClientModels
             }
             lOrder.Total = Convert.ToDouble(ComputeTotalValue());
 
-            ServiceFactory.Instance.OrderService.SubmitOrder(lOrder);
+            string result = ServiceFactory.Instance.OrderService.SubmitOrder(lOrder);
             pUserCache.UpdateUserCache();
             Clear();
+            if (!result.Equals("Order Submitted"))
+            {
+                throw new Exception(result);
+            }
         }
 
         public void RemoveLine(Book pBook)

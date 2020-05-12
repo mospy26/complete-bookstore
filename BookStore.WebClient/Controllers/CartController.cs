@@ -44,16 +44,36 @@ namespace BookStore.WebClient.Controllers
                 pUser.UpdateUserCache();
                 return RedirectToAction("InsufficientStock", new { pItem = e.Detail.ItemName });
             }
-            catch
+            catch (Exception e)
             {
                 pCart.Clear();
                 pUser.UpdateUserCache();
-                return RedirectToAction("ErrorPage");
+                if (e.Message.Equals("Transfer Failed: Insufficient Amount"))
+                {
+                    return RedirectToAction("InsufficientAmount");
+                } else if (e.Message.Equals("Transfer Failed: One of the accounts does not exist"))
+                {
+                    return RedirectToAction("BankAccountError");
+                }
+                else
+                {
+                    return RedirectToAction("ErrorPage");
+                }
             }
             return View(new CheckOutViewModel(pUser.Model));
         }
 
         public ActionResult ErrorPage()
+        {
+            return View();
+        }
+
+        public ActionResult BankAccountError()
+        {
+            return View();
+        }
+
+        public ActionResult InsufficientAmount()
         {
             return View();
         }

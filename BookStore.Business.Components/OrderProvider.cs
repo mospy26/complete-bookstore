@@ -44,7 +44,7 @@ namespace BookStore.Business.Components
             }
         }
 
-        public void SubmitOrder(Entities.Order pOrder)
+        public string SubmitOrder(Entities.Order pOrder)
         {      
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -78,7 +78,12 @@ namespace BookStore.Business.Components
                         lContainer.Orders.Add(pOrder);
 
                         // ask the Bank service to transfer fundss
-                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        string result = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        if (!result.Equals("Transfer Success"))
+                        {
+                            // I am going to assume this will abort the current transaction
+                            return result;
+                        }
 
                         // transfer was successful : ask the delivery service to organise delivery
                         PlaceDeliveryForOrder(pOrder);
@@ -96,6 +101,7 @@ namespace BookStore.Business.Components
                 }
             }
             SendOrderPlacedConfirmation(pOrder);
+            return "Order Submitted";
         }
 
         public void CancelOrder(int pOrderId)
@@ -260,16 +266,9 @@ namespace BookStore.Business.Components
             pOrder.Delivery = lDelivery;   
         }
 
-        private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
+        private string TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
         {
-            try
-            {
-                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
-            }
-            catch
-            {
-                throw new Exception("Error when transferring funds for order."); // TODO (provided code) better exception
-            }
+            return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
         private void TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)

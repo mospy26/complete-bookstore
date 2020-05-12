@@ -9,7 +9,7 @@ namespace BookStore.Business.Components.Interfaces
 {
     public interface IOrderProvider
     {
-        void SubmitOrder(Order pOrder);
+        string SubmitOrder(Order pOrder);
         void CancelOrder(int pOrderId);
 
         List<int> GetOrders(int pUserId);
