@@ -29,5 +29,13 @@ namespace BookStore.Business.Components
                         select Book).FirstOrDefault();
             }
         }
+
+        public int GetTotalBooks()
+        {
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+            {
+                return lContainer.Books.Count<Book>();
+            }
+        }
     }
 }

@@ -15,5 +15,8 @@ namespace BookStore.Services.Interfaces
 
         [OperationContract]
         Book GetBookById(int pId);
+
+        [OperationContract]
+        int GetTotalBooks();
     }
 }
