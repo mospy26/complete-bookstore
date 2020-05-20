@@ -91,7 +91,6 @@ namespace BookStore.Business.Components
                     {
                         SendOrderErrorMessage(pOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
-                        throw;
                     }
                 }
             }
