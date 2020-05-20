@@ -53,7 +53,9 @@ namespace Bank.Business.Components
                     return "Transfer Failed: Unknown Error";
                 }
             }
-            return "Transfer Success";
+            string lSuccessMessage = "Transfer Success";
+            Console.WriteLine(lSuccessMessage);
+            return lSuccessMessage;
         }
 
         private Account GetAccountFromNumber(int pToAcctNumber)
