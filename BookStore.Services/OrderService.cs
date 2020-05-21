@@ -30,11 +30,11 @@ namespace BookStore.Services
             
         }
 
-        public void SubmitOrder(Order pOrder)
+        public string SubmitOrder(Order pOrder)
         {
             try
             {
-                OrderProvider.SubmitOrder(
+                return OrderProvider.SubmitOrder(
                     MessageTypeConverter.Instance.Convert<
                     BookStore.Services.MessageTypes.Order,
                     BookStore.Business.Entities.Order>(pOrder)

@@ -12,7 +12,7 @@ namespace BookStore.Services.Interfaces
     {
         [OperationContract]
         [FaultContract(typeof(InsufficientStockFault))]
-        void SubmitOrder(Order pOrder);
+        string SubmitOrder(Order pOrder);
 
         [OperationContract]
         List<int> GetOrders(int pUserId);

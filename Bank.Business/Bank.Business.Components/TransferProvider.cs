@@ -14,8 +14,7 @@ namespace Bank.Business.Components
     public class TransferProvider : ITransferProvider
     {
 
-
-        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
+        public string Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
@@ -26,6 +25,13 @@ namespace Bank.Business.Components
                     Account lFromAcct = lContainer.Accounts.Where(account => pFromAcctNumber == account.AccountNumber).First(); 
                     Account lToAcct = lContainer.Accounts.Where(account => pToAcctNumber == account.AccountNumber).First();
 
+                    if (lFromAcct.Balance - pAmount < 0)
+                    {
+                        String lMessage = "Transfer Failed: Insufficient Amount";
+                        Console.WriteLine(lMessage);
+                        return lMessage;
+                    }
+
                     // update the two accounts
                     lFromAcct.Withdraw(pAmount);
                     lToAcct.Deposit(pAmount);
@@ -34,12 +40,22 @@ namespace Bank.Business.Components
                     lContainer.SaveChanges();
                     lScope.Complete();
                 }
+                catch (ArgumentNullException lException)
+                {
+                    Console.WriteLine("Error occured while transferring money:  " + lException.Message);
+                    String lMessage = "Transfer Failed: One of the accounts does not exist"; // TODO Find the proper account
+                    Console.WriteLine(lMessage);
+                    return lMessage;
+                }
                 catch (Exception lException)
                 {
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
-                    throw;
+                    return "Transfer Failed: Unknown Error";
                 }
             }
+            string lSuccessMessage = "Transfer Success";
+            Console.WriteLine(lSuccessMessage);
+            return lSuccessMessage;
         }
 
         private Account GetAccountFromNumber(int pToAcctNumber)
