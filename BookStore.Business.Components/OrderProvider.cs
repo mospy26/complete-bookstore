@@ -50,6 +50,7 @@ namespace BookStore.Business.Components
             {
                 //LoadBookStocks(pOrder);
                 //MarkAppropriateUnchangedAssociations(pOrder);
+                string result = "";
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
@@ -78,11 +79,12 @@ namespace BookStore.Business.Components
                         lContainer.Orders.Add(pOrder);
 
                         // ask the Bank service to transfer fundss
-                        string result = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        result = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        
                         if (!result.Equals("Transfer Success"))
                         {
-                            // I am going to assume this will abort the current transaction
-                            return result;
+                            // Email the user about the cause of error through this exception
+                            throw new Exception(result);
                         }
 
                         // transfer was successful : ask the delivery service to organise delivery
@@ -94,8 +96,14 @@ namespace BookStore.Business.Components
                     }
                     catch (Exception lException)
                     {
+                        // need to rollback bank transfer if the transfer happened
+                        if (result == "Transfer Success")
+                        {
+                          TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        }
                         SendOrderErrorMessage(pOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
+                        return result;
                     }
                 }
             }
