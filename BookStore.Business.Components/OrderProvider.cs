@@ -149,7 +149,7 @@ namespace BookStore.Business.Components
                             Console.WriteLine("             " + lOrderItem.Book.Title + ": Quantity " + lOrderItem.Quantity);
                         }
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
 
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
@@ -181,7 +181,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Failed to restore the order items");
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
 
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
@@ -309,7 +309,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Intiating transfer:");
             Console.WriteLine("Account Number: " + pCustomerAccountNumber);
             Console.WriteLine("TOTAL: " + pTotal);
-            Console.WriteLine("==================================");
+            Console.WriteLine("==================================" + "\n");
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
@@ -320,7 +320,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("===========Transferred Funds===========");
                 Console.WriteLine("From: " + pCustomerAccountNumber);
                 Console.WriteLine("Total: " + pTotal);
-                Console.WriteLine("=======================================");
+                Console.WriteLine("=======================================" + "\n");
                 ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
             catch
@@ -381,7 +381,7 @@ namespace BookStore.Business.Components
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
                 
             }
-            Console.WriteLine("=============================================");
+            Console.WriteLine("=============================================" + "\n");
         }
     }
 }

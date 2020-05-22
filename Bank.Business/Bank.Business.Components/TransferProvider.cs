@@ -34,7 +34,7 @@ namespace Bank.Business.Components
                         Console.WriteLine("Total: " + pAmount);
                         Console.WriteLine("Transfer time: " + DateTime.Now);
                         Console.WriteLine("Status: TRANSFER FAILED");
-                        Console.WriteLine("==========================================");
+                        Console.WriteLine("==========================================" + "\n");
                         return lMessage;
                     }
 
@@ -48,7 +48,7 @@ namespace Bank.Business.Components
                     Console.WriteLine("Total: " + pAmount);
                     Console.WriteLine("Transfer time: " + DateTime.Now);
                     Console.WriteLine("Status: TRANSFER COMPLETED");
-                    Console.WriteLine("==========================================");
+                    Console.WriteLine("==========================================" + "\n");
 
                     // save changed entities and finish the transaction
                     lContainer.SaveChanges();

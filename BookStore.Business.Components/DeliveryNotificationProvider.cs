@@ -27,7 +27,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
                 Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
                 Console.WriteLine("Status: FAILED");
-                Console.WriteLine("=================================================");
+                Console.WriteLine("=================================================" + "\n");
                 return false;
             }
             EmailProvider.SendMessage(new EmailMessage()
@@ -40,7 +40,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
             Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
             Console.WriteLine("Status: SUCCESS");
-            Console.WriteLine("=================================================");
+            Console.WriteLine("=================================================" + "\n");
 
             return true;
         }
@@ -56,7 +56,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
                 Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
                 Console.WriteLine("Status: FAILED");
-                Console.WriteLine("===================================================");
+                Console.WriteLine("===================================================" + "\n");
                 return false;
             }
             EmailProvider.SendMessage(new EmailMessage()
@@ -69,7 +69,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
             Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
             Console.WriteLine("Status: SUCCESS");
-            Console.WriteLine("===================================================");
+            Console.WriteLine("===================================================" + "\n");
 
             return true;
         }
@@ -96,7 +96,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
                 Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
                 Console.WriteLine("Status: SUCCESS");
-                Console.WriteLine("======================================================");
+                Console.WriteLine("======================================================" + "\n");
             }
             if (status == Entities.DeliveryStatus.Failed)
             {
@@ -109,7 +109,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
                 Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
                 Console.WriteLine("Status: FAILED");
-                Console.WriteLine("======================================================");
+                Console.WriteLine("======================================================" + "\n");
             }
         }
 
@@ -140,13 +140,13 @@ namespace BookStore.Business.Components
                     Console.WriteLine("============Retrieve Deliver Order============");
                     Console.WriteLine("Order Number: " + pDeliveryId);
                     Console.WriteLine("Status: FAILED");
-                    Console.WriteLine("==============================================");
+                    Console.WriteLine("==============================================" + "\n");
                     return null;
                 }
                 Console.WriteLine("============Retrieve Deliver Order============");
                 Console.WriteLine("Order Number: " + pDeliveryId);
                 Console.WriteLine("Status: SUCCESS");
-                Console.WriteLine("==============================================");
+                Console.WriteLine("==============================================" + "\n");
 
                 return lDelivery.Order;
             }
