@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using BookStore.WebClient.ViewModels;
 using BookStore.Services.MessageTypes;
 using System.ServiceModel;
+using System.Threading;
 
 namespace BookStore.WebClient.Controllers
 {
@@ -21,20 +22,14 @@ namespace BookStore.WebClient.Controllers
 
         public ActionResult DeleteOrder(int pOrderId, String pReturnUrl, UserCache pUserCache)
         {
-            try
-            {
-                ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
-            }
-            catch (FaultException<OrderHasAlreadyBeenDeliveredFault> e)
-            {
-                return RedirectToAction("OrderHasAlreadyBeenDelivered", new { pOrderId = e.Detail.OrderId });
-            }
-            catch (FaultException<OrderDoesNotExistFault> e)
-            {
-                return RedirectToAction("OrderDoesNotExist", new { pOrderId = e.Detail.OrderId });
-            }
+            ThreadPool.QueueUserWorkItem(o => DeleteOrderRunnable(pOrderId));
+            //return RedirectToAction("Index", new { pUserCache = pUserCache });
+            return View("OrderConfirmation");
+        }
 
-            return RedirectToAction("Index", new { pUserCache = pUserCache });
+        private void DeleteOrderRunnable(int pOrderId)
+        {
+            ServiceFactory.Instance.OrderService.CancelOrder(pOrderId);
         }
 
         public ActionResult OrderHasAlreadyBeenDelivered(int pOrderId)
