@@ -127,12 +127,12 @@ namespace BookStore.Business.Components
                     try
                     {
 
-                    if (lOrder == null) throw new OrderDoesNotExistException();
+                        if (lOrder == null) throw new OrderDoesNotExistException();
 
-                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
+                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
 
-                    customerEmail = lOrder.Customer.Email;
-                    orderNumber = lOrder.OrderNumber;
+                        customerEmail = lOrder.Customer.Email;
+                        orderNumber = lOrder.OrderNumber;
 
                         List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
