@@ -113,8 +113,8 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
-            String customerEmail;
-            Guid orderNumber;
+            String customerEmail = "";
+            Guid orderNumber = Guid.Empty;
             
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -124,6 +124,8 @@ namespace BookStore.Business.Components
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
+                    try
+                    {
 
                     if (lOrder == null) throw new OrderDoesNotExistException();
 
@@ -132,8 +134,6 @@ namespace BookStore.Business.Components
                     customerEmail = lOrder.Customer.Email;
                     orderNumber = lOrder.OrderNumber;
 
-                    try
-                    {
                         List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
                         // Restore stocks
@@ -161,7 +161,8 @@ namespace BookStore.Business.Components
                     }
                 }
             }
-            SendOrderCancelledConfirmation(customerEmail, orderNumber);
+            // we have a customer to send the cancelled confirmation to
+            if (customerEmail != "" && orderNumber != Guid.Empty) SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
