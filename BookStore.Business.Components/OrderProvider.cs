@@ -124,6 +124,7 @@ namespace BookStore.Business.Components
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
+                    string result = "";
                     try
                     {
 
@@ -140,7 +141,7 @@ namespace BookStore.Business.Components
                         RestoreStock(orderItems, lContainer);
 
                         // ask the Bank service to transfer fundss
-                        TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
+                        result = TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
                         DeleteDelivery(lOrder.OrderNumber.ToString());
@@ -156,6 +157,11 @@ namespace BookStore.Business.Components
                     }
                     catch (Exception lException)
                     {
+                        // need to rollback bank transfer if the transfer happened
+                        if (result == "Transfer Success")
+                        {
+                            TransferFundsFromCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
+                        }
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                     }
@@ -278,11 +284,11 @@ namespace BookStore.Business.Components
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
-        private void TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
+        private string TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
         {
             try
             {
-                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
+                return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
             catch
             {
