@@ -50,18 +50,7 @@ namespace BookStore.Services
 
         public void CancelOrder(int pOrderId)
         {
-            try
-            {
-                OrderProvider.CancelOrder(pOrderId);
-            } catch (BookStore.Business.Entities.OrderDoesNotExistException e)
-            {
-                throw new FaultException<OrderDoesNotExistFault>(
-                    new OrderDoesNotExistFault() { OrderId = e.OrderId }, "Order does not exist!");
-            } catch (BookStore.Business.Entities.OrderHasAlreadyBeenDeliveredException e)
-            {
-                throw new FaultException<OrderHasAlreadyBeenDeliveredFault>(
-                    new OrderHasAlreadyBeenDeliveredFault() { OrderId = e.OrderId }, "Your order has already been delivered!");
-            }
+            OrderProvider.CancelOrder(pOrderId);
         }
 
         public void GetNotificationFromDeliveryCo(String message)

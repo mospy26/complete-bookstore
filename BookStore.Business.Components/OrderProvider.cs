@@ -113,8 +113,8 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
-            String customerEmail;
-            Guid orderNumber;
+            String customerEmail = "";
+            Guid orderNumber = Guid.Empty;
             
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -124,16 +124,16 @@ namespace BookStore.Business.Components
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
-
-                    if (lOrder == null) throw new OrderDoesNotExistException();
-
-                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
-
-                    customerEmail = lOrder.Customer.Email;
-                    orderNumber = lOrder.OrderNumber;
-
                     try
                     {
+
+                        if (lOrder == null) throw new OrderDoesNotExistException();
+
+                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
+
+                        customerEmail = lOrder.Customer.Email;
+                        orderNumber = lOrder.OrderNumber;
+
                         List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
                         // Restore stocks
@@ -158,11 +158,11 @@ namespace BookStore.Business.Components
                     {
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
-                        throw;
                     }
                 }
             }
-            SendOrderCancelledConfirmation(customerEmail, orderNumber);
+            // we have a customer to send the cancelled confirmation to
+            if (customerEmail != "" && orderNumber != Guid.Empty) SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
         private void DeleteDelivery(string OrderNumber)
