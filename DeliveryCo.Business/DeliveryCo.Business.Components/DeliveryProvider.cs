@@ -20,12 +20,20 @@ namespace DeliveryCo.Business.Components
             {
                 try
                 {
+                    Console.WriteLine("===========Delivery Deleted===========");
+                    Console.WriteLine("Order Number: " + OrderNumber);
+                    Console.WriteLine("Status: SUCCESS");
+                    Console.WriteLine("======================================");
                     DeliveryInfo deleteDelivery = lContainer.DeliveryInfo.Where<DeliveryInfo>(s => s.OrderNumber.Equals(OrderNumber)).First();
                     lContainer.DeliveryInfo.Remove(deleteDelivery);
                     return true;
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("===========Delivery Deleted===========");
+                    Console.WriteLine("Order Number: " + OrderNumber);
+                    Console.WriteLine("Status: FAILED");
+                    Console.WriteLine("======================================");
                     return false;
                 }
             }
@@ -44,6 +52,15 @@ namespace DeliveryCo.Business.Components
                 ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo, pOrderItems)));
                 lScope.Complete();
             }
+
+            Console.WriteLine("===========Delivery Submitted===========");
+            Console.WriteLine("Order items:");
+            foreach(Tuple<String, List<String>> x in pOrderItems)
+            {
+                Console.WriteLine("          " + x.Item1);
+            }
+            Console.WriteLine("========================================");
+
             return pDeliveryInfo.DeliveryIdentifier;
         }
 

@@ -24,17 +24,31 @@ namespace Bank.Business.Components
                     // find the two account entities and add them to the Container
                     Account lFromAcct = lContainer.Accounts.Where(account => pFromAcctNumber == account.AccountNumber).First(); 
                     Account lToAcct = lContainer.Accounts.Where(account => pToAcctNumber == account.AccountNumber).First();
-
+                   
                     if (lFromAcct.Balance - pAmount < 0)
                     {
                         String lMessage = "Transfer Failed: Insufficient Amount";
-                        Console.WriteLine(lMessage);
+                        Console.WriteLine("=================Transfer=================");
+                        Console.WriteLine("From: " + pFromAcctNumber);
+                        Console.WriteLine("To: " + pToAcctNumber);
+                        Console.WriteLine("Total: " + pAmount);
+                        Console.WriteLine("Transfer time: " + DateTime.Now);
+                        Console.WriteLine("Status: TRANSFER FAILED");
+                        Console.WriteLine("==========================================");
                         return lMessage;
                     }
 
                     // update the two accounts
                     lFromAcct.Withdraw(pAmount);
                     lToAcct.Deposit(pAmount);
+
+                    Console.WriteLine("=================Transfer=================");
+                    Console.WriteLine("From: " + pFromAcctNumber);
+                    Console.WriteLine("To: " + pToAcctNumber);
+                    Console.WriteLine("Total: " + pAmount);
+                    Console.WriteLine("Transfer time: " + DateTime.Now);
+                    Console.WriteLine("Status: TRANSFER COMPLETED");
+                    Console.WriteLine("==========================================");
 
                     // save changed entities and finish the transaction
                     lContainer.SaveChanges();
@@ -62,6 +76,7 @@ namespace Bank.Business.Components
         {
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
             {
+                Console.WriteLine("Account number gotten: " + pToAcctNumber);
                 return lContainer.Accounts.Where((pAcct) => (pAcct.AccountNumber == pToAcctNumber)).FirstOrDefault();
             }
         }

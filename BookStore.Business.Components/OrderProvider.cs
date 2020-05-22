@@ -136,6 +136,21 @@ namespace BookStore.Business.Components
                     {
                         List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
+                        Console.WriteLine("================Cancel Order=================");
+                        Console.WriteLine("             Order ID: " + pOrderId);
+                        Console.WriteLine("             CustomerID: " + lOrder.Customer.Id);
+                        Console.WriteLine("             Name: " + lOrder.Customer.Name);
+                        Console.WriteLine("             Address: " + lOrder.Customer.Address);
+                        Console.WriteLine("             Time: " + DateTime.Now);
+                        Console.WriteLine("Items Restored: ");
+                        
+                        foreach(OrderItem lOrderItem in orderItems)
+                        {
+                            Console.WriteLine("             " + lOrderItem.Book.Title + ": Quantity " + lOrderItem.Quantity);
+                        }
+                        
+                        Console.WriteLine("=============================================");
+
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
 
@@ -150,12 +165,24 @@ namespace BookStore.Business.Components
                         lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Orders.Remove(lOrder);
 
+                        
+
                         // save the changes
                         lContainer.SaveChanges();
                         lScope.Complete();
                     }
                     catch (Exception lException)
                     {
+                        Console.WriteLine("================Cancel Order=================");
+                        Console.WriteLine("             Order ID: " + pOrderId);
+                        Console.WriteLine("             CustomerID: " + lOrder.Customer.Id);
+                        Console.WriteLine("             Name: " + lOrder.Customer.Name);
+                        Console.WriteLine("             Address: " + lOrder.Customer.Address);
+                        Console.WriteLine("             Time: " + DateTime.Now);
+                        Console.WriteLine("Failed to restore the order items");
+                        
+                        Console.WriteLine("=============================================");
+
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         throw;
@@ -181,14 +208,17 @@ namespace BookStore.Business.Components
         //    }
         //}
 
-        private void LoadOptimalWarehouseStocks(Order pOrder)
+        // Brute force method: given digits n, generate an array from 1234 to 6789 if n = 4
+        // Total = total number of warehouses...
+        // Need to list all combination of n elements of size total...
+
+        // Prints all combinations of n from array r
+        private void LoadOptimalWarehouseStocks()
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                foreach (OrderItem lOrderItem in pOrder.OrderItems)
-                {
-                    lOrderItem.Book.Stocks = lContainer.Stocks.Where((pStock) => pStock.Book.Id == lOrderItem.Book.Id).ToList<Stock>();    
-                }
+                var total = lContainer.Warehouses.Count();
+                Console.WriteLine("Total warehouses: " + total);
             }
         }
 
@@ -275,6 +305,11 @@ namespace BookStore.Business.Components
 
         private string TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
         {
+            Console.WriteLine("===========Calling BANK===========");
+            Console.WriteLine("Intiating transfer:");
+            Console.WriteLine("Account Number: " + pCustomerAccountNumber);
+            Console.WriteLine("TOTAL: " + pTotal);
+            Console.WriteLine("==================================");
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
@@ -282,6 +317,10 @@ namespace BookStore.Business.Components
         {
             try
             {
+                Console.WriteLine("===========Transferred Funds===========");
+                Console.WriteLine("From: " + pCustomerAccountNumber);
+                Console.WriteLine("Total: " + pTotal);
+                Console.WriteLine("=======================================");
                 ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
             catch
@@ -324,7 +363,8 @@ namespace BookStore.Business.Components
             List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("Stock").Include("OrderItem")
                                             where orderIds.Contains(OrderStock1.OrderItem.Id)
                                             select OrderStock1).ToList<OrderStock>();
-
+            Console.WriteLine("================Stock Restore================");
+            Console.WriteLine("Order items:");
             foreach (OrderStock orderStock in orderStocks)
             {
                 Stock stock = pContainer.Stocks.SingleOrDefault(r => r.Id == orderStock.Stock.Id);
@@ -332,12 +372,16 @@ namespace BookStore.Business.Components
                 // the item was not chosen - should never reach this case but in case
                 if (stock == null) continue;
 
+                Console.WriteLine("         " + orderStock.OrderItem.Book.Title + ": Quantity: " + orderStock.Quantity);
+
                 stock.Quantity = stock.Quantity.Value + orderStock.Quantity;
                 pContainer.Entry(orderStock).State = System.Data.Entity.EntityState.Deleted;
                 pContainer.OrderStocks.Remove(orderStock);
                 pContainer.Stocks.Attach(stock);
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
+                
             }
+            Console.WriteLine("=============================================");
         }
     }
 }
