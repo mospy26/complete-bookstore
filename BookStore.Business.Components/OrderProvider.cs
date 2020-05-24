@@ -134,8 +134,8 @@ namespace BookStore.Business.Components
 
         public void CancelOrder(int pOrderId)
         {
-            String customerEmail;
-            Guid orderNumber;
+            String customerEmail = "";
+            Guid orderNumber = Guid.Empty;
             
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -145,16 +145,17 @@ namespace BookStore.Business.Components
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
                     Order lOrder = lContainer.Orders.FirstOrDefault(o => o.Id == pOrderId);
-
-                    if (lOrder == null) throw new OrderDoesNotExistException();
-
-                    if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered) throw new OrderHasAlreadyBeenDeliveredException();
-
-                    customerEmail = lOrder.Customer.Email;
-                    orderNumber = lOrder.OrderNumber;
-
+                    string result = "";
                     try
                     {
+
+                        if (lOrder == null) throw new OrderDoesNotExistException();
+
+                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted) throw new OrderHasAlreadyBeenDeliveredException();
+
+                        customerEmail = lOrder.Customer.Email;
+                        orderNumber = lOrder.OrderNumber;
+
                         List<OrderItem> orderItems = lOrder.OrderItems.ToList<OrderItem>();
 
                         Console.WriteLine("================Cancel Order=================");
@@ -176,10 +177,10 @@ namespace BookStore.Business.Components
                         RestoreStock(orderItems, lContainer);
 
                         // ask the Bank service to transfer fundss
-                        TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
+                        result = TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
-                        DeleteDelivery(lOrder.OrderNumber.ToString());
+                        if (!DeleteDelivery(lOrder.OrderNumber.ToString())) throw new Exception("Could not delete delivery");
 
                         lOrder.OrderItems.ToList().ForEach(o => { lContainer.Entry(o).State = System.Data.Entity.EntityState.Deleted; });
                         lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
@@ -204,18 +205,24 @@ namespace BookStore.Business.Components
                         
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
+
+                        // need to rollback bank transfer if the transfer happened
+                        if (result == "Transfer Success")
+                        {
+                            TransferFundsFromCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
+                        }
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
-                        throw;
                     }
                 }
             }
-            SendOrderCancelledConfirmation(customerEmail, orderNumber);
+            // we have a customer to send the cancelled confirmation to
+            if (customerEmail != "" && orderNumber != Guid.Empty) SendOrderCancelledConfirmation(customerEmail, orderNumber);
         }
 
-        private void DeleteDelivery(string OrderNumber)
+        private bool DeleteDelivery(string OrderNumber)
         {
-            ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
+            return ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
         }
 
         //private void MarkAppropriateUnchangedAssociations(Order pOrder)
@@ -245,29 +252,72 @@ namespace BookStore.Business.Components
 
         private void SendOrderErrorMessage(Order pOrder, Exception pException)
         {
-            EmailProvider.SendMessage(new EmailMessage()
+            try
             {
-                ToAddress = pOrder.Customer.Email,
-                Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": "+ pException.Message + ". Please contact Book Store"
-            });
+                EmailProvider.SendMessage(new EmailMessage()
+                {
+                    ToAddress = pOrder.Customer.Email,
+                    Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": " + pException.Message + ". Please contact Book Store"
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("=================Email====================");
+                Console.WriteLine("From: BookStore");
+                Console.WriteLine("To: " + pOrder.Customer.Email);
+                Console.WriteLine("Order ID: " + pOrder.OrderNumber);
+                Console.WriteLine("Transfer time: " + DateTime.Now);
+                Console.WriteLine("Status: Error occured, Email not sent");
+                Console.WriteLine(pException.Message);
+                Console.WriteLine("==========================================" + "\n");
+                Console.WriteLine("Failed to send email to customer about error in processing order");
+            }
         }
 
         private void SendOrderPlacedConfirmation(Order pOrder)
         {
-            EmailProvider.SendMessage(new EmailMessage()
+            try
             {
-                ToAddress = pOrder.Customer.Email,
-                Message = "Your order " + pOrder.OrderNumber + " has been placed"
-            });
+                EmailProvider.SendMessage(new EmailMessage()
+                {
+                    ToAddress = pOrder.Customer.Email,
+                    Message = "Your order " + pOrder.OrderNumber + " has been placed"
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("=================Email====================");
+                Console.WriteLine("From: BookStore");
+                Console.WriteLine("To: " + pOrder.Customer.Email);
+                Console.WriteLine("Order ID: " + pOrder.OrderNumber);
+                Console.WriteLine("OrderConfirmation time: " + DateTime.Now);
+                Console.WriteLine("Status: Order Confirmed, Email not sent");
+                Console.WriteLine("==========================================" + "\n");
+                Console.WriteLine("Failed to send email to customer about order confirmation");
+            }
         }
 
         private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
         {
-            EmailProvider.SendMessage(new EmailMessage()
+            try
             {
-                ToAddress = customerEmail,
-                Message = "Your order " + orderEmail + " has been cancelled"
-            });
+                EmailProvider.SendMessage(new EmailMessage()
+                {
+                    ToAddress = customerEmail,
+                    Message = "Your order " + orderEmail + " has been cancelled"
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("=================Email====================");
+                Console.WriteLine("From: BookStore");
+                Console.WriteLine("To: " + customerEmail);
+                Console.WriteLine("Order ID: " + orderEmail);
+                Console.WriteLine("Cancellation time: " + DateTime.Now);
+                Console.WriteLine("Status: Order Cancelled, Email not sent");
+                Console.WriteLine("==========================================" + "\n");
+                Console.WriteLine("Failed to send email to customer about order cancellation");
+            }
         }
 
         private void GetDeliveryAddress(HashSet<String> pAddresses, Order pOrder)
@@ -294,7 +344,7 @@ namespace BookStore.Business.Components
                 DestinationAddress = pOrder.Customer.Address, 
                 Order = pOrder 
             };
-            // ArrayList<String, ArrayList<String>>
+
             OrderInfo lOrderInfo = new OrderInfo();
 
             foreach (OrderItem oi in pOrder.OrderItems)
@@ -344,7 +394,7 @@ namespace BookStore.Business.Components
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
-        private void TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
+        private string TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
         {
             try
             {
@@ -409,7 +459,7 @@ namespace BookStore.Business.Components
             {
                 Stock stock = pContainer.Stocks.SingleOrDefault(r => r.Id == orderStock.Stock.Id);
 
-                // the item was not chosen - should never reach this case but in case
+                // the item was not chosen
                 if (stock == null) continue;
 
                 Console.WriteLine("         " + orderStock.OrderItem.Book.Title + ": Quantity: " + orderStock.Quantity);
