@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BookStore.WebClient.ClientModels;
-using BookStore.WebClient.ViewModels;
 
 namespace BookStore.WebClient
 {
@@ -29,7 +26,7 @@ namespace BookStore.WebClient
         public static void ClearCartBinder(HttpSessionStateBase pSession)
         {
             Cart lCart = pSession[cartSessionKey] as Cart;
-            if(lCart != null)
+            if (lCart != null)
             {
                 lCart.Clear();
             }

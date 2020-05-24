@@ -1,5 +1,4 @@
 ﻿using System;
-using DeliveryCo.Services.Interfaces;
 using System.ServiceModel;
 using BookStore.Services.Interfaces;
 

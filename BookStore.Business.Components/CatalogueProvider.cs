@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using BookStore.Business.Components.Interfaces;
 using BookStore.Business.Entities;
 
@@ -14,8 +12,8 @@ namespace BookStore.Business.Components
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 return (from Book in lContainer.Books.Include(Common.ReflectionUtil.GetPropertyName(() => new Book().Stocks))
-                       orderby Book.Id
-                       select Book).Skip(pOffset).Take(pCount).ToList();
+                        orderby Book.Id
+                        select Book).Skip(pOffset).Take(pCount).ToList();
             }
         }
 

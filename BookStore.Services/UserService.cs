@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BookStore.Services.Interfaces;
+﻿using BookStore.Services.Interfaces;
 using BookStore.Business.Components.Interfaces;
-using System.ComponentModel.Composition;
-using Microsoft.Practices.ServiceLocation;
 using BookStore.Services.MessageTypes;
 
 
@@ -24,7 +18,7 @@ namespace BookStore.Services
         public void CreateUser(User pUser)
         {
             var internalType = MessageTypeConverter.Instance.Convert<
-                BookStore.Services.MessageTypes.User, 
+                BookStore.Services.MessageTypes.User,
                 BookStore.Business.Entities.User>(
                 pUser);
             UserProvider.CreateUser(internalType);
@@ -34,7 +28,7 @@ namespace BookStore.Services
         public User ReadUserById(int pUserId)
         {
             var externalType = MessageTypeConverter.Instance.Convert<
-                BookStore.Business.Entities.User, 
+                BookStore.Business.Entities.User,
                 BookStore.Services.MessageTypes.User>(
                 UserProvider.ReadUserById(pUserId));
             return externalType;
@@ -44,7 +38,7 @@ namespace BookStore.Services
         public void UpdateUser(User pUser)
         {
             var internalType = MessageTypeConverter.Instance.Convert<
-                BookStore.Services.MessageTypes.User, 
+                BookStore.Services.MessageTypes.User,
                 BookStore.Business.Entities.User>(
                 pUser);
 
@@ -86,11 +80,12 @@ namespace BookStore.Services
         }
 
 
-        public User GetUserByEmail(string email) {
+        public User GetUserByEmail(string email)
+        {
             var externalType = MessageTypeConverter.Instance.Convert<
                 BookStore.Business.Entities.User,
                 BookStore.Services.MessageTypes.User>(
-                UserProvider.GetUserByEmail(email));        
+                UserProvider.GetUserByEmail(email));
 
             return externalType;
         }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using BookStore.Business.Components.Interfaces;
 using BookStore.Business.Entities;
 using System.Transactions;
-using System.ComponentModel.Composition;
 
 namespace BookStore.Business.Components
 {
@@ -13,7 +9,7 @@ namespace BookStore.Business.Components
     {
         public void CreateUser(User pUser)
         {
-            using(TransactionScope lScope = new TransactionScope())
+            using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 lContainer.Users.Add(pUser);
@@ -35,7 +31,7 @@ namespace BookStore.Business.Components
 
         public void UpdateUser(User pUser)
         {
-            using(TransactionScope lScope = new TransactionScope())
+            using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 lContainer.Users.Add(pUser);
@@ -47,7 +43,7 @@ namespace BookStore.Business.Components
 
         public void DeleteUser(User pUser)
         {
-            using(TransactionScope lScope = new TransactionScope())
+            using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 lContainer.Users.Remove(pUser);
@@ -60,10 +56,10 @@ namespace BookStore.Business.Components
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                
+
                 var lCredentials = from lCredential in lContainer.LoginCredentials
-                            where lCredential.UserName == username && lCredential.EncryptedPassword == password
-                            select lCredential;
+                                   where lCredential.UserName == username && lCredential.EncryptedPassword == password
+                                   select lCredential;
                 return lCredentials.Count() > 0;
             }
         }
@@ -73,10 +69,10 @@ namespace BookStore.Business.Components
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                
+
                 var lCredentials = from lCredential in lContainer.LoginCredentials
-                            where lCredential.UserName == username && lCredential.EncryptedPassword == password
-                            select lCredential;
+                                   where lCredential.UserName == username && lCredential.EncryptedPassword == password
+                                   select lCredential;
 
                 if (lCredentials.Count() > 0)
                 {

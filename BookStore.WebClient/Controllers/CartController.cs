@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Web;
 using System.Web.Mvc;
 using BookStore.Services.MessageTypes;
 using BookStore.WebClient.ClientModels;
@@ -38,7 +35,7 @@ namespace BookStore.WebClient.Controllers
             {
                 pCart.SubmitOrderAndClearCart(pUser);
             }
-            catch (FaultException<InsufficientStockFault> e) 
+            catch (FaultException<InsufficientStockFault> e)
             {
                 pCart.Clear();
                 pUser.UpdateUserCache();
@@ -51,7 +48,8 @@ namespace BookStore.WebClient.Controllers
                 if (e.Message.Equals("Transfer Failed: Insufficient Amount"))
                 {
                     return RedirectToAction("InsufficientAmount");
-                } else if (e.Message.Equals("Transfer Failed: One of the accounts does not exist"))
+                }
+                else if (e.Message.Equals("Transfer Failed: One of the accounts does not exist"))
                 {
                     return RedirectToAction("BankAccountError");
                 }

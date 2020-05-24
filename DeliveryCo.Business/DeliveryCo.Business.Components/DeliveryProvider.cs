@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DeliveryCo.Business.Components.Interfaces;
 using System.Transactions;
 using DeliveryCo.Business.Entities;
@@ -16,7 +15,7 @@ namespace DeliveryCo.Business.Components
         public bool DeleteDelivery(String OrderNumber)
         {
 
-            using(DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
+            using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
             {
                 try
                 {
@@ -44,8 +43,8 @@ namespace DeliveryCo.Business.Components
 
         public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
-            using(TransactionScope lScope = new TransactionScope())
-            using(DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
+            using (TransactionScope lScope = new TransactionScope())
+            using (DeliveryCoEntityModelContainer lContainer = new DeliveryCoEntityModelContainer())
             {
                 pDeliveryInfo.DeliveryIdentifier = Guid.NewGuid();
                 pDeliveryInfo.Status = 0;
@@ -57,7 +56,7 @@ namespace DeliveryCo.Business.Components
 
             Console.WriteLine("===========Delivery Submitted===========");
             Console.WriteLine("Order items:");
-            foreach(Tuple<String, List<String>> x in pOrderItems)
+            foreach (Tuple<String, List<String>> x in pOrderItems)
             {
                 Console.WriteLine("          " + x.Item1);
             }
@@ -75,7 +74,7 @@ namespace DeliveryCo.Business.Components
             // notify received request
             ExternalServiceFactory.Instance.OrderService.GetNotificationFromDeliveryCo("Notification from DeliveryCo: Received request to deliver books from warehouse address: " + pDeliveryInfo.SourceAddress + " to " + pDeliveryInfo.DestinationAddress);
 
-            
+
             Thread.Sleep(3000);
 
             // notify goods have been picked up
@@ -108,7 +107,7 @@ namespace DeliveryCo.Business.Components
                 IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
                 lEmailResult = lService.NotifyOnDeliveryTruckOrder(pDeliveryInfo.DeliveryIdentifier);
             }
-            
+
             foreach (Tuple<string, List<String>> e in pOrderItems)
             {
                 Console.WriteLine("Book " + e.Item1 + " dispatching from warehouses:");

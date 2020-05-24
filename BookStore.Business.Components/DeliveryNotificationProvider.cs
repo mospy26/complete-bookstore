@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using BookStore.Business.Components.Interfaces;
 using BookStore.Business.Entities;
 using Microsoft.Practices.ServiceLocation;
@@ -15,7 +13,7 @@ namespace BookStore.Business.Components
         {
             get { return ServiceLocator.Current.GetInstance<IEmailProvider>(); }
         }
-        
+
         public bool NotifyPickedUpOrder(Guid pDeliveryId)
         {
             Order lAffectedOrder = RetrieveDeliveryOrder(pDeliveryId);
@@ -97,7 +95,7 @@ namespace BookStore.Business.Components
                 EmailProvider.SendMessage(new EmailMessage()
                 {
                     ToAddress = lAffectedOrder.Customer.Email,
-                    Message = "Our records show that your order " +lAffectedOrder.OrderNumber + " has been delivered. Thank you for shopping at Book store"
+                    Message = "Our records show that your order " + lAffectedOrder.OrderNumber + " has been delivered. Thank you for shopping at Book store"
                 });
                 Console.WriteLine("============Delivery Complete Notification============");
                 Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
@@ -141,9 +139,9 @@ namespace BookStore.Business.Components
 
         private Order RetrieveDeliveryOrder(Guid pDeliveryId)
         {
- 	        using(BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
-                Delivery lDelivery =  lContainer.Deliveries.Include("Order.Customer").Where((pDel) => pDel.ExternalDeliveryIdentifier == pDeliveryId).FirstOrDefault();
+                Delivery lDelivery = lContainer.Deliveries.Include("Order.Customer").Where((pDel) => pDel.ExternalDeliveryIdentifier == pDeliveryId).FirstOrDefault();
 
                 // Order was cancelled
                 if (lDelivery == null)

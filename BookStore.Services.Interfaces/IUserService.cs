@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BookStore.Services.MessageTypes;
+﻿using BookStore.Services.MessageTypes;
 using System.ServiceModel;
 
 namespace BookStore.Services.Interfaces

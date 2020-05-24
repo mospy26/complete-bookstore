@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Bank.Business.Components.Interfaces;
 using Bank.Business.Entities;
 using System.Transactions;
 using System.Data;
-using System.Data.Entity.Infrastructure;
-using Bank.Services.Interfaces;
 
 namespace Bank.Business.Components
 {
@@ -22,7 +18,7 @@ namespace Bank.Business.Components
                 try
                 {
                     // find the two account entities and add them to the Container
-                    Account lFromAcct = lContainer.Accounts.Where(account => pFromAcctNumber == account.AccountNumber).First(); 
+                    Account lFromAcct = lContainer.Accounts.Where(account => pFromAcctNumber == account.AccountNumber).First();
                     Account lToAcct = lContainer.Accounts.Where(account => pToAcctNumber == account.AccountNumber).First();
                     if (lFromAcct.Balance - pAmount < 0)
                     {

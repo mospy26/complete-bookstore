@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DeliveryCo.Services.Interfaces;
 using DeliveryCo.Business.Components.Interfaces;
 using System.ServiceModel;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
-using System.Collections;
 
 namespace DeliveryCo.Services
 {
@@ -30,7 +26,7 @@ namespace DeliveryCo.Services
         public Guid SubmitDelivery(DeliveryInfo pDeliveryInfo, OrderInfo pOrderItemToWarehouses)
         {
             return DeliveryProvider.SubmitDelivery(
-                MessageTypeConverter.Instance.Convert<DeliveryCo.MessageTypes.DeliveryInfo, 
+                MessageTypeConverter.Instance.Convert<DeliveryCo.MessageTypes.DeliveryInfo,
                 DeliveryCo.Business.Entities.DeliveryInfo>(pDeliveryInfo), pOrderItemToWarehouses.OrderItem
             );
         }

@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using BookStore.Business.Components.Interfaces;
 using BookStore.Business.Entities;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
-using System.Collections;
-using System.ServiceModel;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Threading;
 
 namespace BookStore.Business.Components
@@ -78,7 +74,7 @@ namespace BookStore.Business.Components
                         List<Warehouse> bestWares = LoadOptimalWarehouseStocks(pOrder);
 
                         // cannot satisfy
-                        if(bestWares.Count == 0)
+                        if (bestWares.Count == 0)
                         {
                             throw new Exception("Insufficient stock");
                         }
@@ -94,7 +90,7 @@ namespace BookStore.Business.Components
 
                         // ask the Bank service to transfer fundss
                         lResult = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
-                        
+
                         if (!lResult.Equals("Transfer Success"))
                         {
                             // Email the user about the cause of error through this exception
@@ -110,7 +106,7 @@ namespace BookStore.Business.Components
 
                         // and save the order
                         lContainer.SaveChanges();
-                        lScope.Complete();        
+                        lScope.Complete();
                     }
                     catch (Exception lException)
                     {
@@ -135,7 +131,7 @@ namespace BookStore.Business.Components
                             TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
                         }
                         SendOrderErrorMessage(pOrder, lException);
-                        IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
+                        IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         return lResult;
                     }
                 }
@@ -156,7 +152,8 @@ namespace BookStore.Business.Components
                     CreateDelivery(lOrder);
                     lContainer.SaveChanges();
                     lScope.Complete();
-                } catch (Exception lException)
+                }
+                catch (Exception lException)
                 {
                     SendOrderDeletedErrorMessage(lCustomerEmail, lOrderId);
                     return "Order Failed";
@@ -167,7 +164,7 @@ namespace BookStore.Business.Components
             Thread.Sleep(5000);
 
             using (TransactionScope lScope = new TransactionScope())
-            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer()) 
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
             {
                 try
                 {
@@ -177,7 +174,7 @@ namespace BookStore.Business.Components
                     PlaceDeliveryForOrder(lOrder, lDelivery);
                     lContainer.SaveChanges();
                     lScope.Complete();
-                } 
+                }
                 catch (Exception lException)
                 {
                     SendOrderDeletedErrorMessage(lCustomerEmail, lOrderId);
@@ -211,7 +208,7 @@ namespace BookStore.Business.Components
         {
             String customerEmail = "";
             Guid orderNumber = Guid.Empty;
-            
+
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -239,12 +236,12 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Address: " + lOrder.Customer.Address);
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Items Restored: ");
-                        
-                        foreach(OrderItem lOrderItem in orderItems)
+
+                        foreach (OrderItem lOrderItem in orderItems)
                         {
                             Console.WriteLine("             " + lOrderItem.Book.Title + ": Quantity " + lOrderItem.Quantity);
                         }
-                        
+
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
 
@@ -274,7 +271,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Address: " + lOrder.Customer.Address);
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Failed to restore the order items");
-                        
+
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
 
@@ -331,7 +328,7 @@ namespace BookStore.Business.Components
                     int totalAmount = 0;
 
                     // Keep track of the total amount of stocks
-                    foreach(OrderItem lOrderitem in pOrder.OrderItems)
+                    foreach (OrderItem lOrderitem in pOrder.OrderItems)
                     {
                         totalAmount += lOrderitem.Quantity;
                     }
@@ -348,7 +345,7 @@ namespace BookStore.Business.Components
                             satisfy = true;
 
                             // For every order item
-                            foreach(OrderItem lOrderItem in pOrder.OrderItems)
+                            foreach (OrderItem lOrderItem in pOrder.OrderItems)
                             {
                                 // Get the total amount of that item
                                 int totalQuantity = 0;
@@ -377,12 +374,12 @@ namespace BookStore.Business.Components
                                 }
 
                                 // Subtract the total amount of items from the total order amount
-                                if(totalQuantity == 0)
+                                if (totalQuantity == 0)
                                 {
                                     tempTotal -= lOrderItem.Quantity;
                                 }
                             }
-                            
+
                             if (tempTotal > 0)
                             {
                                 satisfy = false;
@@ -393,7 +390,7 @@ namespace BookStore.Business.Components
                             if (satisfy)
                             {
                                 Console.WriteLine("Best combination: ");
-                                foreach(Warehouse w in warehouses)
+                                foreach (Warehouse w in warehouses)
                                 {
                                     Console.WriteLine("Warehouse ID: " + w.Id);
                                     newList.Add(w);
@@ -621,7 +618,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("=======================================");
                 Console.WriteLine(" ");
                 return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
-            } 
+            }
             catch
             {
                 Console.WriteLine("===========Transferred Funds===========");
@@ -684,7 +681,7 @@ namespace BookStore.Business.Components
                 pContainer.OrderStocks.Remove(orderStock);
                 pContainer.Stocks.Attach(stock);
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
-                
+
             }
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=============================================");

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace BookStore.WebClient.ViewModels
+﻿namespace BookStore.WebClient.ViewModels
 {
     public class OrderHasAlreadyBeenDeliveredViewModel
     {
