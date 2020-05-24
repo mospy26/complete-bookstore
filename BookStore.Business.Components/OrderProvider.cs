@@ -405,7 +405,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Status: SUCCESS");
                 Console.WriteLine("=======================================");
                 Console.WriteLine(" ");
-                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
+                return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
             catch
             {
