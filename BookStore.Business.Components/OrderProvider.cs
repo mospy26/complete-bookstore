@@ -234,24 +234,8 @@ namespace BookStore.Business.Components
             return ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
         }
 
-        //private void MarkAppropriateUnchangedAssociations(Order pOrder)
-        //{
-        //    pOrder.Customer.MarkAsUnchanged();
-        //    pOrder.Customer.LoginCredential.MarkAsUnchanged();
-        //    foreach (OrderItem lOrder in pOrder.OrderItems)
-        //    {
-        //        lOrder.Book.Stock.MarkAsUnchanged();
-        //        lOrder.Book.MarkAsUnchanged();
-        //    }
-        //}
-
-        // Brute force method: given digits n, generate an array from 1234 to 6789 if n = 4
-        // Total = total number of warehouses...
-        // Need to list all combination of n elements of size total...
-
-        // Prints all combinations of n from array r
-        // Code replicated from
-
+        // Code taken from stack overflow
+        // Gets all permutations of a list of given length
         static IEnumerable<IEnumerable<T>>
         GetPermutations<T>(IEnumerable<T> list, int length)
         {
@@ -261,6 +245,7 @@ namespace BookStore.Business.Components
                     (t1, t2) => t1.Concat(new T[] { t2 }));
         }
 
+        // Loads the optimals warehouses and returns them
         private List<Warehouse> LoadOptimalWarehouseStocks(Order pOrder)
         {
             try
@@ -271,21 +256,17 @@ namespace BookStore.Business.Components
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
-                    //foreach (OrderItem lOrderItem in pOrder.OrderItems)
-                    //{
-                    //    lOrderItem.Book.Stocks = lContainer.Stocks.Where((pStock) => pStock.Book.Id == lOrderItem.Book.Id).ToList<Stock>();    
-                    //}
-
                     // Get all warehouses
                     List<Warehouse> lWarehouses = lContainer.Warehouses.ToList<Warehouse>();
 
                     int length = 1;
 
-                    // brute force algorithm
+                    // Brute force algorithm
                     Boolean satisfy = false;
 
                     int totalAmount = 0;
 
+                    // Keep track of the total amount of stocks
                     foreach(OrderItem lOrderitem in pOrder.OrderItems)
                     {
                         totalAmount += lOrderitem.Quantity;
@@ -293,30 +274,14 @@ namespace BookStore.Business.Components
 
                     while (!satisfy)
                     {
+                        // Get permutations
                         IEnumerable<IEnumerable<Warehouse>> lPermutedWarehouses = GetPermutations(lWarehouses, length);
 
+                        // For each combination of warehouses
                         foreach (IEnumerable<Warehouse> warehouses in lPermutedWarehouses)
                         {
                             int tempTotal = totalAmount;
                             satisfy = true;
-
-                            foreach (Warehouse w in warehouses)
-                            {
-                                //Console.WriteLine("TRYING WAREHOUSE: #" + w.Id);
-                            }
-
-                            // Order: 1A 1B 1C
-                            // Total amount = 3
-                            // 2
-
-                            //W1: 1A
-                            //W2: 1B
-                            //W3: 1C
-                            //W4: 1A 1C
-
-                            // W1W2
-                            // ...
-                            // W1 W4
 
                             // For every order item
                             foreach(OrderItem lOrderItem in pOrder.OrderItems)
@@ -346,18 +311,21 @@ namespace BookStore.Business.Components
                                         }
                                     }
                                 }
+
+                                // Subtract the total amount of items from the total order amount
                                 if(totalQuantity == 0)
                                 {
                                     tempTotal -= lOrderItem.Quantity;
                                 }
-
-                                //Console.WriteLine("TEMPTOTAL: " + tempTotal);
                             }
+                            
                             if (tempTotal > 0)
                             {
                                 satisfy = false;
                             }
 
+                            // if every item can be satisfied
+                            // Add it to the List 
                             if (satisfy)
                             {
                                 Console.WriteLine("Best combination: ");
@@ -369,6 +337,8 @@ namespace BookStore.Business.Components
                                 return newList;
                             }
                         }
+
+                        // Cannot satisfy the order in n warehouses, try n+1 warehouses
                         length++;
                     }
                     return newList;
