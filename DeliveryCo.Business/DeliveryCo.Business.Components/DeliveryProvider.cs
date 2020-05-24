@@ -63,7 +63,7 @@ namespace DeliveryCo.Business.Components
             }
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("========================================");
-
+            Console.WriteLine(" ");
             return pDeliveryInfo.DeliveryIdentifier;
         }
 
