@@ -122,6 +122,7 @@ namespace BookStore.Process
                         Title = "3 No Book"
                     };
 
+
                     Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 1);
                     Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 0);
                     Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 0);
