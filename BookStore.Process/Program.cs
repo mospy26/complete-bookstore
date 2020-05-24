@@ -103,7 +103,7 @@ namespace BookStore.Process
                         Author = "Jane Austen",
                         Genre = "Fiction",
                         Price = 20.0,
-                        Title = "Pride and Prejudice",
+                        Title = "1 Pride and Prejudice",
                     };
 
                     Book lSoloist = new Book() // 1 5 2 4 
@@ -111,7 +111,7 @@ namespace BookStore.Process
                         Author = "Charles Dickens",
                         Genre = "Fiction",
                         Price = 15.0,
-                        Title = "Grape Expectations"
+                        Title = "2 Grape Expectations"
                     };
 
                     Book lNoBook = new Book() // 1 5 2 4 
@@ -119,18 +119,24 @@ namespace BookStore.Process
                         Author = "No Book",
                         Genre = "Fiction",
                         Price = 10.0,
-                        Title = "No Book"
+                        Title = "3 No Book"
                     };
 
-                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 4);
-                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
-                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
+                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 1);
+                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 0);
+                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 0);
                     Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
 
-                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 1);
-                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 5);
-                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 2);
-                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 4);
+                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 0);
+                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 1);
+                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 0);
+                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 0);
+
+
+                    Stock lNoBookNeutralBayStock = CreateStock(lNoBook, lNeutralBay, 0);
+                    Stock lNoBookTheWarehouseStock = CreateStock(lNoBook, lTheWarehouse, 0);
+                    Stock lNoBookStorageKingStock = CreateStock(lNoBook, lStorageKing, 1);
+                    Stock lNoBookAmazonStock = CreateStock(lNoBook, lAmazon, 1);
 
                     lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
@@ -145,6 +151,11 @@ namespace BookStore.Process
                     lContainer.Stocks.Add(lSoloistStorageKingStock);
                     lContainer.Stocks.Add(lSoloistTheWarehouseStock);
                     lContainer.Stocks.Add(lSoloistAmazonStock);
+
+                    lContainer.Stocks.Add(lNoBookNeutralBayStock);
+                    lContainer.Stocks.Add(lNoBookTheWarehouseStock);
+                    lContainer.Stocks.Add(lNoBookStorageKingStock);
+                    lContainer.Stocks.Add(lNoBookAmazonStock);
 
                     //for (int i = 1; i < 10; i++)
                     //{

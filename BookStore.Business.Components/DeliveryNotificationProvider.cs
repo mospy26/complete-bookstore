@@ -24,8 +24,7 @@ namespace BookStore.Business.Components
             if (lAffectedOrder == null)
             {
                 Console.WriteLine("============PickUp Order Notification============");
-                Console.WriteLine("Order Number: " + lAffectedOrder.OrderNumber);
-                Console.WriteLine("Date: " + lAffectedOrder.OrderDate);
+                Console.WriteLine("Order Guid: " + pDeliveryId);
                 Console.WriteLine("Status: FAILED");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("=================================================");
