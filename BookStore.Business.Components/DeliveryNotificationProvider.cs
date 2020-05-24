@@ -25,6 +25,7 @@ namespace BookStore.Business.Components
             {
                 Console.WriteLine("============PickUp Order Notification============");
                 Console.WriteLine("Message: Delivery does not exist");
+                Console.WriteLine("Order Guid: " + pDeliveryId);
                 Console.WriteLine("Status: FAILED");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("=================================================");

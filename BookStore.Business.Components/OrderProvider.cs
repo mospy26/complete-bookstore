@@ -74,8 +74,17 @@ namespace BookStore.Business.Components
                             lOrderItem.Book = lContainer.Books.Where(book => bookId == book.Id).First();
                             lOrderItem.Book.Stocks = lContainer.Stocks.Where(stock => bookId == stock.Book.Id).ToList<Stock>();
                         }
+
+                        List<Warehouse> bestWares = LoadOptimalWarehouseStocks(pOrder);
+
+                        // cannot satisfy
+                        if(bestWares.Count == 0)
+                        {
+                            throw new Exception("Insufficient stock");
+                        }
+
                         // and update the stock levels
-                        List<Tuple<Stock, OrderItem, int>> lConsumedStocks = pOrder.UpdateStockLevels();
+                        List<Tuple<Stock, OrderItem, int>> lConsumedStocks = pOrder.UpdateStockLevels(bestWares, lContainer);
 
                         // record the stocks that have been consumed
                         RecordPurchasedBooksFromStocks(lConsumedStocks, lContainer);
@@ -288,23 +297,122 @@ namespace BookStore.Business.Components
             return ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
         }
 
-        //private void MarkAppropriateUnchangedAssociations(Order pOrder)
-        //{
-        //    pOrder.Customer.MarkAsUnchanged();
-        //    pOrder.Customer.LoginCredential.MarkAsUnchanged();
-        //    foreach (OrderItem lOrder in pOrder.OrderItems)
-        //    {
-        //        lOrder.Book.Stock.MarkAsUnchanged();
-        //        lOrder.Book.MarkAsUnchanged();
-        //    }
-        //}
 
-        private void LoadOptimalWarehouseStocks()
+        // Code taken from stack overflow
+        // Gets all permutations of a list of given length
+        // https://stackoverflow.com/questions/1952153/what-is-the-best-way-to-find-all-combinations-of-items-in-an-array
+        static IEnumerable<IEnumerable<T>> GetPermutations<T>(IEnumerable<T> list, int length)
         {
-            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+            if (length == 1) return list.Select(t => new T[] { t });
+            return GetPermutations(list, length - 1)
+                .SelectMany(t => list.Where(o => !t.Contains(o)),
+                    (t1, t2) => t1.Concat(new T[] { t2 }));
+        }
+
+        // Loads the optimals warehouses and returns them
+        private List<Warehouse> LoadOptimalWarehouseStocks(Order pOrder)
+        {
+            try
             {
-                var total = lContainer.Warehouses.Count();
-                Console.WriteLine("Total warehouses: " + total);
+                List<Warehouse> newList = new List<Warehouse>();
+
+                if (!pOrder.canSatisfy()) return newList;
+
+                using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+                {
+                    // Get all warehouses
+                    List<Warehouse> lWarehouses = lContainer.Warehouses.ToList<Warehouse>();
+
+                    int length = 1;
+
+                    // Brute force algorithm
+                    Boolean satisfy = false;
+
+                    int totalAmount = 0;
+
+                    // Keep track of the total amount of stocks
+                    foreach(OrderItem lOrderitem in pOrder.OrderItems)
+                    {
+                        totalAmount += lOrderitem.Quantity;
+                    }
+
+                    while (!satisfy)
+                    {
+                        // Get permutations
+                        IEnumerable<IEnumerable<Warehouse>> lPermutedWarehouses = GetPermutations(lWarehouses, length);
+
+                        // For each combination of warehouses
+                        foreach (IEnumerable<Warehouse> warehouses in lPermutedWarehouses)
+                        {
+                            int tempTotal = totalAmount;
+                            satisfy = true;
+
+                            // For every order item
+                            foreach(OrderItem lOrderItem in pOrder.OrderItems)
+                            {
+                                // Get the total amount of that item
+                                int totalQuantity = 0;
+
+                                totalQuantity += lOrderItem.Quantity;
+
+                                // Check if all the warehouses can satisfy that item
+                                foreach (Warehouse w in warehouses)
+                                {
+                                    foreach (Stock stock in w.Stocks)
+                                    {
+                                        // if it's the same book
+                                        if (stock.Book.Id == lOrderItem.Book.Id)
+                                        {
+                                            if (stock.Quantity.Value >= lOrderItem.Quantity)
+                                            {
+                                                // Satisfy it
+                                                totalQuantity = 0;
+                                            }
+                                            else
+                                            {
+                                                totalQuantity -= (stock.Quantity.Value);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Subtract the total amount of items from the total order amount
+                                if(totalQuantity == 0)
+                                {
+                                    tempTotal -= lOrderItem.Quantity;
+                                }
+                            }
+                            
+                            if (tempTotal > 0)
+                            {
+                                satisfy = false;
+                            }
+
+                            // if every item can be satisfied
+                            // Add it to the List 
+                            if (satisfy)
+                            {
+                                Console.WriteLine("Best combination: ");
+                                foreach(Warehouse w in warehouses)
+                                {
+                                    Console.WriteLine("Warehouse ID: " + w.Id);
+                                    newList.Add(w);
+                                }
+                                return newList;
+                            }
+                        }
+
+                        // Cannot satisfy the order in n warehouses, try n+1 warehouses
+                        length++;
+                    }
+                    return newList;
+                }
+            }
+            catch (InsufficientStockException e)
+            {
+                Console.WriteLine("Exception: No stock left");
+
+                return new List<Warehouse>();
             }
         }
 
