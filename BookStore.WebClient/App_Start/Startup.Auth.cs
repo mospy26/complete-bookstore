@@ -1,13 +1,12 @@
-﻿using System;
+﻿using BookStore.Services.MessageTypes;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.Google;
 using Owin;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient
 {
@@ -36,7 +35,7 @@ namespace BookStore.WebClient
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
-            });            
+            });
         }
     }
 

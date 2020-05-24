@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BookStore.Business.Components.Interfaces;
 using BookStore.Services.Interfaces;
-using BookStore.Business.Components.Interfaces;
-using Microsoft.Practices.ServiceLocation;
 using BookStore.Services.MessageTypes;
-
+using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace BookStore.Services
@@ -27,7 +23,7 @@ namespace BookStore.Services
             List<int> lOrdersBefore = OrderProvider.GetOrders(pUserId);
 
             return lOrdersBefore;
-            
+
         }
 
         public string SubmitOrder(Order pOrder)
@@ -40,9 +36,9 @@ namespace BookStore.Services
                     BookStore.Business.Entities.Order>(pOrder)
                 );
             }
-            catch(BookStore.Business.Entities.InsufficientStockException ise)
+            catch (BookStore.Business.Entities.InsufficientStockException ise)
             {
-                Console.WriteLine(ise.ItemName);    
+                Console.WriteLine(ise.ItemName);
                 throw new FaultException<InsufficientStockFault>(
                     new InsufficientStockFault() { ItemName = ise.ItemName }, "Insufficient Stock, cannot make order");
             }

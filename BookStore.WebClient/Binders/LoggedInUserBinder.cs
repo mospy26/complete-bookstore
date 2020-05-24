@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BookStore.Services.MessageTypes;
+using System;
 using System.Web;
 using System.Web.Mvc;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient
 {
@@ -14,7 +12,9 @@ namespace BookStore.WebClient
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             if (bindingContext.Model != null)
+            {
                 throw new InvalidOperationException("Cannot update instances");
+            }
 
             UserCache lUserCache = controllerContext.HttpContext.Session[UserSessionKey] as UserCache;
 

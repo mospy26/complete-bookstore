@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DeliveryCo.Services.Interfaces;
+﻿using DeliveryCo.Services.Interfaces;
+using System;
 using System.ServiceModel;
 
 namespace DeliveryCo.Business.Components

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EmailService.Services.Interfaces;
-using EmailService.Business.Components.Interfaces;
+﻿using EmailService.Business.Components.Interfaces;
 using EmailService.MessageTypes;
-using Microsoft.Practices.ServiceLocation;
+using EmailService.Services.Interfaces;
 
 namespace EmailService.Services
 {

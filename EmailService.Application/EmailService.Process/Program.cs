@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ServiceModel;
+﻿using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.ServiceLocatorAdapter;
-using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Configuration;
+using System.ServiceModel;
 
 namespace EmailService.Process
 {
@@ -20,7 +17,7 @@ namespace EmailService.Process
             {
                 lHost.Open();
                 Console.WriteLine("Email Service Started");
-                while (Console.ReadKey().Key != ConsoleKey.Q) ;
+                while (Console.ReadKey().Key != ConsoleKey.Q);
             }
         }
 

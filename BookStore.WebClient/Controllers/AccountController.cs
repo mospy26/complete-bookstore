@@ -1,15 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
+﻿using BookStore.Services.MessageTypes;
+using BookStore.WebClient.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using BookStore.WebClient.ViewModels;
-using BookStore.Services.MessageTypes;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 
 namespace BookStore.WebClient.Controllers
 {
@@ -23,11 +19,11 @@ namespace BookStore.WebClient.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
-          
+
         }
 
         public ApplicationSignInManager SignInManager
@@ -36,9 +32,9 @@ namespace BookStore.WebClient.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -46,7 +42,7 @@ namespace BookStore.WebClient.Controllers
         {
             get
             {
-                if(_userManager == null)
+                if (_userManager == null)
                 {
                     HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>().PasswordHasher = new CustomAuth.CustomHasher();
                     return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -85,7 +81,7 @@ namespace BookStore.WebClient.Controllers
             User user = await UserManager.FindAsync(model.UserName, model.Password);
             if (user != null)
             {
-               
+
                 LoggedInUserBinder.BindUser(Session, user.UserName, user.LoginCredential.EncryptedPassword);
                 await SignInAsync(user, false);
                 return RedirectToLocal(returnUrl);
@@ -137,7 +133,7 @@ namespace BookStore.WebClient.Controllers
         }
 
 
- 
+
         //
         // POST: /Account/LogOff
         [HttpPost]

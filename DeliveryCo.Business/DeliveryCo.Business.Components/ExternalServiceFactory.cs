@@ -1,7 +1,6 @@
-﻿using System;
-using DeliveryCo.Services.Interfaces;
+﻿using BookStore.Services.Interfaces;
+using System;
 using System.ServiceModel;
-using BookStore.Services.Interfaces;
 
 namespace DeliveryCo.Business.Components
 {

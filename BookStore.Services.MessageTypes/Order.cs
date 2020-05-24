@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BookStore.Services.MessageTypes
 {
@@ -17,6 +13,6 @@ namespace BookStore.Services.MessageTypes
         public double Total { get; set; }
         public System.DateTime OrderDate { get; set; }
         public int Status { get; set; }
-        public User Customer {get;set;}
+        public User Customer { get; set; }
     }
 }

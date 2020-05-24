@@ -1,10 +1,8 @@
-﻿using System;
+﻿using BookStore.Services.MessageTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Web;
-using BookStore.Services.MessageTypes;
-using BookStore.WebClient.ViewModels;
 
 namespace BookStore.WebClient.ClientModels
 {

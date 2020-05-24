@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BookStore.Business.Components.Interfaces
+﻿namespace BookStore.Business.Components.Interfaces
 {
     public interface IStockProvider
     {

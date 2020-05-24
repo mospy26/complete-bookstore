@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BookStore.WebClient.ViewModels;
 using System.Web.Mvc;
-using BookStore.WebClient.ViewModels;
 
 namespace BookStore.WebClient.Controllers
 {

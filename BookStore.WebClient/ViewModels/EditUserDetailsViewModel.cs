@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BookStore.Services.MessageTypes;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient.ViewModels
 {

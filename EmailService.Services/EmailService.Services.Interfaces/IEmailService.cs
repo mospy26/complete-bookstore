@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using EmailService.MessageTypes;
 using System.ServiceModel;
-using EmailService.MessageTypes;
 
 namespace EmailService.Services.Interfaces
 {

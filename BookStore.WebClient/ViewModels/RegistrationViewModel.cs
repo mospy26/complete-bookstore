@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BookStore.Services.MessageTypes;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient.ViewModels
 {
     public class RegistrationViewModel
     {
- 
+
         [EmailAddress]
         [Display(Name = "Email Address")]
         public string Email { get; set; }

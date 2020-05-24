@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Bank.Business.Components.Interfaces;
 using Bank.Services.Interfaces;
-using Bank.Business.Components.Interfaces;
-using System.ServiceModel;
 using Microsoft.Practices.ServiceLocation;
+using System.ServiceModel;
 
 namespace Bank.Services
 {
@@ -16,7 +12,7 @@ namespace Bank.Services
             get { return ServiceLocator.Current.GetInstance<ITransferProvider>(); }
         }
 
-        [OperationBehavior(TransactionScopeRequired=true)]
+        [OperationBehavior(TransactionScopeRequired = true)]
         public string Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
         {
             return TransferProvider.Transfer(pAmount, pFromAcctNumber, pToAcctNumber);

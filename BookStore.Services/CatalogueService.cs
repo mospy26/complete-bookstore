@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BookStore.Business.Components.Interfaces;
 using BookStore.Services.Interfaces;
-using BookStore.Business.Components.Interfaces;
-using Microsoft.Practices.ServiceLocation;
 using BookStore.Services.MessageTypes;
+using System.Collections.Generic;
 
 namespace BookStore.Services
 {

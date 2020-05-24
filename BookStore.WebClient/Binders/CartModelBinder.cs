@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BookStore.WebClient.ClientModels;
+using System;
 using System.Web;
 using System.Web.Mvc;
-using BookStore.WebClient.ClientModels;
-using BookStore.WebClient.ViewModels;
 
 namespace BookStore.WebClient
 {
@@ -15,7 +12,9 @@ namespace BookStore.WebClient
         public object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             if (bindingContext.Model != null)
+            {
                 throw new InvalidOperationException("Cannot update instances");
+            }
 
             Cart lCart = (Cart)controllerContext.HttpContext.Session[cartSessionKey];
             if (lCart == null)
@@ -29,7 +28,7 @@ namespace BookStore.WebClient
         public static void ClearCartBinder(HttpSessionStateBase pSession)
         {
             Cart lCart = pSession[cartSessionKey] as Cart;
-            if(lCart != null)
+            if (lCart != null)
             {
                 lCart.Clear();
             }

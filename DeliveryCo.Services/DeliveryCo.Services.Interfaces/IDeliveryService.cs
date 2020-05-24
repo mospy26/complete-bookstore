@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using DeliveryCo.MessageTypes;
+using System;
 using System.ServiceModel;
-using DeliveryCo.MessageTypes;
-using System.Collections;
 
 namespace DeliveryCo.Services.Interfaces
 {

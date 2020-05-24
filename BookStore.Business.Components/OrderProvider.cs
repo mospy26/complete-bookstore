@@ -1,15 +1,11 @@
-﻿using System;
+﻿using BookStore.Business.Components.Interfaces;
+using BookStore.Business.Entities;
+using DeliveryCo.MessageTypes;
+using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BookStore.Business.Components.Interfaces;
-using BookStore.Business.Entities;
 using System.Transactions;
-using Microsoft.Practices.ServiceLocation;
-using DeliveryCo.MessageTypes;
-using System.Collections;
-using System.ServiceModel;
-using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace BookStore.Business.Components
 {
@@ -38,14 +34,17 @@ namespace BookStore.Business.Components
 
                 foreach (Order order in lOrders)
                 {
-                    if (order.Delivery.DeliveryStatus == 0) lOrderIds.Add(order.Id);
+                    if (order.Delivery.DeliveryStatus == 0)
+                    {
+                        lOrderIds.Add(order.Id);
+                    }
                 }
                 return lOrderIds;
             }
         }
 
         public string SubmitOrder(Entities.Order pOrder)
-        {      
+        {
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -73,7 +72,7 @@ namespace BookStore.Business.Components
                         List<Warehouse> bestWares = LoadOptimalWarehouseStocks(pOrder);
 
                         // cannot satisfy
-                        if(bestWares.Count == 0)
+                        if (bestWares.Count == 0)
                         {
                             throw new Exception("Insufficient stock");
                         }
@@ -89,7 +88,7 @@ namespace BookStore.Business.Components
 
                         // ask the Bank service to transfer fundss
                         result = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
-                        
+
                         if (!result.Equals("Transfer Success"))
                         {
                             // Email the user about the cause of error through this exception
@@ -108,7 +107,7 @@ namespace BookStore.Business.Components
 
                         // and save the order
                         lContainer.SaveChanges();
-                        lScope.Complete();        
+                        lScope.Complete();
                     }
                     catch (Exception lException)
                     {
@@ -132,7 +131,7 @@ namespace BookStore.Business.Components
                             TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
                         }
                         SendOrderErrorMessage(pOrder, lException);
-                        IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
+                        IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         return result;
                     }
                 }
@@ -145,7 +144,7 @@ namespace BookStore.Business.Components
         {
             String customerEmail = "";
             Guid orderNumber = Guid.Empty;
-            
+
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
@@ -158,9 +157,15 @@ namespace BookStore.Business.Components
                     try
                     {
 
-                        if (lOrder == null) throw new OrderDoesNotExistException();
+                        if (lOrder == null)
+                        {
+                            throw new OrderDoesNotExistException();
+                        }
 
-                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted) throw new OrderHasAlreadyBeenDeliveredException();
+                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted)
+                        {
+                            throw new OrderHasAlreadyBeenDeliveredException();
+                        }
 
                         customerEmail = lOrder.Customer.Email;
                         orderNumber = lOrder.OrderNumber;
@@ -174,12 +179,12 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Address: " + lOrder.Customer.Address);
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Items Restored: ");
-                        
-                        foreach(OrderItem lOrderItem in orderItems)
+
+                        foreach (OrderItem lOrderItem in orderItems)
                         {
                             Console.WriteLine("             " + lOrderItem.Book.Title + ": Quantity " + lOrderItem.Quantity);
                         }
-                        
+
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
                         // Restore stocks
@@ -189,14 +194,17 @@ namespace BookStore.Business.Components
                         result = TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
-                        if (!DeleteDelivery(lOrder.OrderNumber.ToString())) throw new Exception("Could not delete delivery");
+                        if (!DeleteDelivery(lOrder.OrderNumber.ToString()))
+                        {
+                            throw new Exception("Could not delete delivery");
+                        }
 
                         lOrder.OrderItems.ToList().ForEach(o => { lContainer.Entry(o).State = System.Data.Entity.EntityState.Deleted; });
                         lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Orders.Remove(lOrder);
 
-                        
+
 
                         // save the changes
                         lContainer.SaveChanges();
@@ -211,7 +219,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Address: " + lOrder.Customer.Address);
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Failed to restore the order items");
-                        
+
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
 
@@ -226,7 +234,10 @@ namespace BookStore.Business.Components
                 }
             }
             // we have a customer to send the cancelled confirmation to
-            if (customerEmail != "" && orderNumber != Guid.Empty) SendOrderCancelledConfirmation(customerEmail, orderNumber);
+            if (customerEmail != "" && orderNumber != Guid.Empty)
+            {
+                SendOrderCancelledConfirmation(customerEmail, orderNumber);
+            }
         }
 
         private bool DeleteDelivery(string OrderNumber)
@@ -239,7 +250,11 @@ namespace BookStore.Business.Components
         static IEnumerable<IEnumerable<T>>
         GetPermutations<T>(IEnumerable<T> list, int length)
         {
-            if (length == 1) return list.Select(t => new T[] { t });
+            if (length == 1)
+            {
+                return list.Select(t => new T[] { t });
+            }
+
             return GetPermutations(list, length - 1)
                 .SelectMany(t => list.Where(o => !t.Contains(o)),
                     (t1, t2) => t1.Concat(new T[] { t2 }));
@@ -252,7 +267,10 @@ namespace BookStore.Business.Components
             {
                 List<Warehouse> newList = new List<Warehouse>();
 
-                if (!pOrder.canSatisfy()) return newList;
+                if (!pOrder.canSatisfy())
+                {
+                    return newList;
+                }
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
@@ -267,7 +285,7 @@ namespace BookStore.Business.Components
                     int totalAmount = 0;
 
                     // Keep track of the total amount of stocks
-                    foreach(OrderItem lOrderitem in pOrder.OrderItems)
+                    foreach (OrderItem lOrderitem in pOrder.OrderItems)
                     {
                         totalAmount += lOrderitem.Quantity;
                     }
@@ -284,7 +302,7 @@ namespace BookStore.Business.Components
                             satisfy = true;
 
                             // For every order item
-                            foreach(OrderItem lOrderItem in pOrder.OrderItems)
+                            foreach (OrderItem lOrderItem in pOrder.OrderItems)
                             {
                                 // Get the total amount of that item
                                 int totalQuantity = 0;
@@ -313,12 +331,12 @@ namespace BookStore.Business.Components
                                 }
 
                                 // Subtract the total amount of items from the total order amount
-                                if(totalQuantity == 0)
+                                if (totalQuantity == 0)
                                 {
                                     tempTotal -= lOrderItem.Quantity;
                                 }
                             }
-                            
+
                             if (tempTotal > 0)
                             {
                                 satisfy = false;
@@ -329,7 +347,7 @@ namespace BookStore.Business.Components
                             if (satisfy)
                             {
                                 Console.WriteLine("Best combination: ");
-                                foreach(Warehouse w in warehouses)
+                                foreach (Warehouse w in warehouses)
                                 {
                                     Console.WriteLine("Warehouse ID: " + w.Id);
                                     newList.Add(w);
@@ -344,7 +362,7 @@ namespace BookStore.Business.Components
                     return newList;
                 }
             }
-            catch (InsufficientStockException e)
+            catch (InsufficientStockException)
             {
                 Console.WriteLine("Exception: No stock left");
 
@@ -362,7 +380,7 @@ namespace BookStore.Business.Components
                     Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": " + pException.Message + ". Please contact Book Store"
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
@@ -386,7 +404,7 @@ namespace BookStore.Business.Components
                     Message = "Your order " + pOrder.OrderNumber + " has been placed"
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
@@ -409,7 +427,7 @@ namespace BookStore.Business.Components
                     Message = "Your order " + orderEmail + " has been cancelled"
                 });
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
@@ -440,11 +458,12 @@ namespace BookStore.Business.Components
             GetDeliveryAddress(lAddress, pOrder);
             String lSourceAddress = String.Join(", ", lAddress);
 
-            Delivery lDelivery = new Delivery() { 
-                DeliveryStatus = DeliveryStatus.Submitted, 
-                SourceAddress = lSourceAddress, 
-                DestinationAddress = pOrder.Customer.Address, 
-                Order = pOrder 
+            Delivery lDelivery = new Delivery()
+            {
+                DeliveryStatus = DeliveryStatus.Submitted,
+                SourceAddress = lSourceAddress,
+                DestinationAddress = pOrder.Customer.Address,
+                Order = pOrder
             };
 
             OrderInfo lOrderInfo = new OrderInfo();
@@ -481,7 +500,7 @@ namespace BookStore.Business.Components
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(lDeliveryInfo, lOrderInfo);
 
             lDelivery.ExternalDeliveryIdentifier = lDeliveryIdentifier;
-            pOrder.Delivery = lDelivery;   
+            pOrder.Delivery = lDelivery;
         }
 
         private string TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
@@ -508,7 +527,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("=======================================");
                 Console.WriteLine(" ");
                 return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
-            } 
+            }
             catch
             {
                 Console.WriteLine("===========Transferred Funds===========");
@@ -541,7 +560,7 @@ namespace BookStore.Business.Components
                     pContainer.OrderStocks.Add(orderStock);
                 }
             }
-            catch (Exception lException)
+            catch (Exception)
             {
                 throw;
             }
@@ -562,7 +581,10 @@ namespace BookStore.Business.Components
                 Stock stock = pContainer.Stocks.SingleOrDefault(r => r.Id == orderStock.Stock.Id);
 
                 // the item was not chosen
-                if (stock == null) continue;
+                if (stock == null)
+                {
+                    continue;
+                }
 
                 Console.WriteLine("         " + orderStock.OrderItem.Book.Title + ": Quantity: " + orderStock.Quantity);
 
@@ -571,7 +593,7 @@ namespace BookStore.Business.Components
                 pContainer.OrderStocks.Remove(orderStock);
                 pContainer.Stocks.Attach(stock);
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
-                
+
             }
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=============================================");

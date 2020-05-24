@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BookStore.Services.MessageTypes;
+using Microsoft.AspNet.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient.CustomAuth
 {

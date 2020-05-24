@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNet.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace BookStore.WebClient.CustomAuth
 {
@@ -16,11 +12,12 @@ namespace BookStore.WebClient.CustomAuth
         public PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
             var genHash = HashPassword(providedPassword);
-            if(hashedPassword == genHash)
+            if (hashedPassword == genHash)
             {
                 return PasswordVerificationResult.Success;
             }
-            else{
+            else
+            {
                 return PasswordVerificationResult.Failed;
             }
         }

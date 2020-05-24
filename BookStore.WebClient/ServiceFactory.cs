@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BookStore.Services.Interfaces;
+using System;
 using System.ServiceModel;
-using System.Web;
-using BookStore.Services.Interfaces;
 
 namespace BookStore.WebClient
 {
@@ -43,7 +40,7 @@ namespace BookStore.WebClient
         {
             get
             {
-                return  GetTcpService<IRoleService>("net.tcp://localhost:9010/RoleService");
+                return GetTcpService<IRoleService>("net.tcp://localhost:9010/RoleService");
             }
         }
 

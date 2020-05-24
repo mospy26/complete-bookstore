@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using BookStore.Business.Components.Interfaces;
+﻿using BookStore.Business.Components.Interfaces;
+using System;
 
 namespace BookStore.Business.Components
 {

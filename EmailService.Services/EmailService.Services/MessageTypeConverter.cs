@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EmailService.Services
+﻿namespace EmailService.Services
 {
     /// <summary>
     /// Based on AutoMapper: https://github.com/AutoMapper/AutoMapper/wiki/Getting-started

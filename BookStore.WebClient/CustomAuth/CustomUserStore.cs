@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using BookStore.Services.Interfaces;
+using BookStore.Services.MessageTypes;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using BookStore.Services.Interfaces;
-using BookStore.Services.MessageTypes;
 
 namespace BookStore.WebClient.CustomAuth
 {
-    public class CustomUserStore : 
-        IUserStore<User, int>, 
+    public class CustomUserStore :
+        IUserStore<User, int>,
         IUserStore<User>,
-        IUserRoleStore<User, int>, 
+        IUserRoleStore<User, int>,
         IUserRoleStore<User>,
         IUserPasswordStore<User, int>,
         IUserPasswordStore<User>,
@@ -38,7 +36,7 @@ namespace BookStore.WebClient.CustomAuth
 
         public System.Threading.Tasks.Task CreateAsync(User user)
         {
-            return RunVoidTask( () => UserServiceClient.CreateUser(user));
+            return RunVoidTask(() => UserServiceClient.CreateUser(user));
         }
 
         public System.Threading.Tasks.Task DeleteAsync(User user)
@@ -78,7 +76,7 @@ namespace BookStore.WebClient.CustomAuth
 
         public System.Threading.Tasks.Task<bool> IsInRoleAsync(User user, string roleName)
         {
-            return RunTask<bool>(() => 
+            return RunTask<bool>(() =>
                 RoleServiceClient.GetRolesForUser(user).ConvertAll(x => x.Name).Contains(roleName)
                 );
         }
@@ -88,7 +86,7 @@ namespace BookStore.WebClient.CustomAuth
             throw new NotImplementedException();
         }
 
-     
+
         //Called to fetch correct password from db
         public System.Threading.Tasks.Task<string> GetPasswordHashAsync(User user)
         {
@@ -98,15 +96,15 @@ namespace BookStore.WebClient.CustomAuth
 
         public System.Threading.Tasks.Task<bool> HasPasswordAsync(User user)
         {
-            return RunTask<bool>(() =>  UserServiceClient.ReadUserById(user.Id) == null);
+            return RunTask<bool>(() => UserServiceClient.ReadUserById(user.Id) == null);
         }
 
-      
+
         //Called on client to set password on user parameter before user is sent to db for persistence
         public System.Threading.Tasks.Task SetPasswordHashAsync(User user, string passwordHash)
         {
             //TODO: Add Salting
-            return RunVoidTask(() => 
+            return RunVoidTask(() =>
                 {
                     user.LoginCredential.EncryptedPassword = passwordHash;
 
@@ -141,7 +139,7 @@ namespace BookStore.WebClient.CustomAuth
 
         public Task<string> GetEmailAsync(User user)
         {
-            return RunTask<string>(()=>user.Email);
+            return RunTask<string>(() => user.Email);
         }
 
         public Task<bool> GetEmailConfirmedAsync(User user)
@@ -166,7 +164,7 @@ namespace BookStore.WebClient.CustomAuth
 
         public Task<bool> GetPhoneNumberConfirmedAsync(User user)
         {
-            return RunTask<bool>(() => true );
+            return RunTask<bool>(() => true);
         }
 
         public Task SetPhoneNumberAsync(User user, string phoneNumber)

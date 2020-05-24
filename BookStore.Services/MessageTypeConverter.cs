@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BookStore.Business.Components.Interfaces;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BookStore.Business.Components.Interfaces;
 
 namespace BookStore.Services
 {
@@ -69,17 +65,17 @@ namespace BookStore.Services
 
         public Destination Convert<Source, Destination>(Source s) where Destination : class
         {
-            if(typeof(Source) == typeof(BookStore.Services.MessageTypes.User))
+            if (typeof(Source) == typeof(BookStore.Services.MessageTypes.User))
             {
                 return ConvertUserToInternalType(s as MessageTypes.User) as Destination;
             }
-            else if(typeof(Source) == typeof(BookStore.Business.Entities.User))
+            else if (typeof(Source) == typeof(BookStore.Business.Entities.User))
             {
                 return ConvertToExternalType(s as Business.Entities.User) as Destination;
             }
 
             var result = AutoMapper.Mapper.Map<Source, Destination>(s);
-            if(typeof(Source) == typeof(MessageTypes.Order))
+            if (typeof(Source) == typeof(MessageTypes.Order))
             {
                 (result as Business.Entities.Order).Customer = ConvertUserToInternalType(
                     (s as MessageTypes.Order).Customer
@@ -99,7 +95,7 @@ namespace BookStore.Services
                 Revision = user.Revision,
             };
 
-            if(user.LoginCredential != null)
+            if (user.LoginCredential != null)
             {
                 lExternal.LoginCredential = new MessageTypes.LoginCredential()
                 {
@@ -116,19 +112,19 @@ namespace BookStore.Services
         {
 
             Business.Entities.User lInternal = UserProvider.ReadUserById(user.Id);
-            if(lInternal == null)
+            if (lInternal == null)
             {
                 lInternal = new Business.Entities.User();
             }
-            
-            
+
+
             lInternal.Address = user.Address;
             lInternal.Email = user.Email;
             lInternal.Id = user.Id;
             lInternal.Name = user.Name;
             lInternal.Revision = user.Revision;
-            
-            if(user.LoginCredential != null)
+
+            if (user.LoginCredential != null)
             {
                 lInternal.LoginCredential = new Business.Entities.LoginCredential()
                 {

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Transactions;
-using Bank.Business.Entities;
-using System.ServiceModel;
+﻿using Bank.Business.Entities;
 using Bank.Services;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.ServiceLocatorAdapter;
-using Microsoft.Practices.ServiceLocation;
+using System;
 using System.Configuration;
+using System.Linq;
+using System.ServiceModel;
+using System.Transactions;
 
 namespace Bank.Process
 {
@@ -30,7 +28,7 @@ namespace Bank.Process
             {
                 lHost.Open();
                 Console.WriteLine("Bank Services started. Press Q to quit.");
-                while (Console.ReadKey().Key != ConsoleKey.Q) ;
+                while (Console.ReadKey().Key != ConsoleKey.Q);
             }
         }
 
