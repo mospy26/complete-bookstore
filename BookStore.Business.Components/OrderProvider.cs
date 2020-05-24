@@ -10,6 +10,7 @@ using DeliveryCo.MessageTypes;
 using System.Collections;
 using System.ServiceModel;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Threading;
 
 namespace BookStore.Business.Components
 {
@@ -38,19 +39,21 @@ namespace BookStore.Business.Components
 
                 foreach (Order order in lOrders)
                 {
-                    if (order.Delivery.DeliveryStatus == 0) lOrderIds.Add(order.Id);
+                    if (order.Delivery == null) lOrderIds.Add(order.Id);
                 }
                 return lOrderIds;
             }
         }
 
         public string SubmitOrder(Entities.Order pOrder)
-        {      
+        {
+            string lCustomerEmail = "";
+            Guid lOrderId = Guid.Empty;
             using (TransactionScope lScope = new TransactionScope())
             {
                 //LoadBookStocks(pOrder);
                 //MarkAppropriateUnchangedAssociations(pOrder);
-                string result = "";
+                string lResult = "";
 
                 using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
                 {
@@ -60,6 +63,8 @@ namespace BookStore.Business.Components
 
                         pOrder.OrderNumber = Guid.NewGuid();
                         pOrder.Store = "OnLine";
+                        lCustomerEmail = pOrder.Customer.Email;
+                        lOrderId = pOrder.OrderNumber;
 
                         // Book objects in pOrder are missing the link to their Stock tuple (and the Stock GUID field)
                         // so fix up the 'books' in the order with well-formed 'books' with 1:1 links to Stock tuples
@@ -79,16 +84,16 @@ namespace BookStore.Business.Components
                         lContainer.Orders.Add(pOrder);
 
                         // ask the Bank service to transfer fundss
-                        result = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        lResult = TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
                         
-                        if (!result.Equals("Transfer Success"))
+                        if (!lResult.Equals("Transfer Success"))
                         {
                             // Email the user about the cause of error through this exception
-                            throw new Exception(result);
+                            throw new Exception(lResult);
                         }
 
-                        // transfer was successful : ask the delivery service to organise delivery
-                        PlaceDeliveryForOrder(pOrder);
+                        //// transfer was successful : ask the delivery service to organise delivery
+                        //PlaceDeliveryForOrder(pOrder);
 
                         Console.WriteLine("=============Order Submit=============");
                         Console.WriteLine("Order ID: " + pOrder.Id);
@@ -109,10 +114,11 @@ namespace BookStore.Business.Components
                         Console.WriteLine("Time: " + DateTime.Now);
                         Console.WriteLine("======================================");
                         Console.WriteLine(" ");
+
                         // need to rollback bank transfer if the transfer happened
-                        if (result == "Transfer Success")
+                        if (lResult == "Transfer Success")
                         {
-                            Console.WriteLine("=============CALLING BANK=============");
+                            Console.WriteLine("=============Calling BANK - Rollback=============");
                             Console.WriteLine("Intiating ROLLBACK on bank trasnfer");
                             Console.WriteLine("Order ID: " + pOrder.Id);
                             Console.WriteLine("Acc Number: " + UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber);
@@ -124,12 +130,71 @@ namespace BookStore.Business.Components
                         }
                         SendOrderErrorMessage(pOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
-                        return result;
+                        return lResult;
                     }
                 }
             }
+
+            SendOrderConfirmedConfirmation(pOrder);
+            Thread.Sleep(20000);
+
+            using (TransactionScope lScope = new TransactionScope())
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
+            {
+                try
+                {
+                    Order lOrder = lContainer.Orders.Where(o => o.Id == pOrder.Id).FirstOrDefault<Order>();
+                    if (lOrder == null) throw new Exception("Cannot place order as your order was cancelled");
+                    CreateDelivery(lOrder);
+                    lContainer.SaveChanges();
+                    lScope.Complete();
+                } catch (Exception lException)
+                {
+                    SendOrderDeletedErrorMessage(lCustomerEmail, lOrderId);
+                    return "Order Failed";
+                }
+            }
+
+            Thread.Sleep(5000);
+
+            using (TransactionScope lScope = new TransactionScope())
+            using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer()) 
+            {
+                try
+                {
+                    Order lOrder = lContainer.Orders.Where(o => o.Id == pOrder.Id).FirstOrDefault<Order>();
+                    if (lOrder == null) throw new Exception("Cannot place order as your order was cancelled");
+                    Delivery lDelivery = lContainer.Deliveries.Where(d => d.Order.Id == lOrder.Id).FirstOrDefault<Delivery>();
+                    PlaceDeliveryForOrder(lOrder, lDelivery);
+                    lContainer.SaveChanges();
+                    lScope.Complete();
+                } catch (Exception lException)
+                {
+                    SendOrderDeletedErrorMessage(lCustomerEmail, lOrderId);
+                    return "Order Failed";
+                }
+            }
+
             SendOrderPlacedConfirmation(pOrder);
             return "Order Submitted";
+        }
+
+        private void CreateDelivery(Order pOrder)
+        {
+            // Notify DeliveryCo that books are ready to pick up
+            HashSet<String> lAddress = new HashSet<String>();
+            GetDeliveryAddress(lAddress, pOrder);
+            String lSourceAddress = String.Join(", ", lAddress);
+
+            Delivery lDelivery = new Delivery()
+            {
+                DeliveryStatus = DeliveryStatus.Submitted,
+                SourceAddress = lSourceAddress,
+                DestinationAddress = pOrder.Customer.Address,
+                Order = pOrder
+            };
+
+            pOrder.Delivery = lDelivery;
         }
 
         public void CancelOrder(int pOrderId)
@@ -150,8 +215,8 @@ namespace BookStore.Business.Components
                     {
 
                         if (lOrder == null) throw new OrderDoesNotExistException();
-
-                        if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted) throw new OrderHasAlreadyBeenDeliveredException();
+                        if (lOrder.Delivery != null) throw new OrderHasAlreadyBeenDeliveredException();
+                        //if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted) throw new OrderHasAlreadyBeenDeliveredException();
 
                         customerEmail = lOrder.Customer.Email;
                         orderNumber = lOrder.OrderNumber;
@@ -173,6 +238,7 @@ namespace BookStore.Business.Components
                         
                         Console.WriteLine("=============================================" + "\n");
                         Console.WriteLine(" ");
+
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
 
@@ -180,14 +246,12 @@ namespace BookStore.Business.Components
                         result = TransferFundsToCustomer(UserProvider.ReadUserById(lOrder.Customer.Id).BankAccountNumber, lOrder.Total ?? 0.0);
 
                         // Delete the delivery in the delivery table 
-                        if (!DeleteDelivery(lOrder.OrderNumber.ToString())) throw new Exception("Could not delete delivery");
+                        DeleteDelivery(lOrder.OrderNumber.ToString());
 
                         lOrder.OrderItems.ToList().ForEach(o => { lContainer.Entry(o).State = System.Data.Entity.EntityState.Deleted; });
-                        lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
+                        //lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Orders.Remove(lOrder);
-
-                        
 
                         // save the changes
                         lContainer.SaveChanges();
@@ -260,15 +324,39 @@ namespace BookStore.Business.Components
                     Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": " + pException.Message + ". Please contact Book Store"
                 });
             }
-            catch (Exception e)
+            catch (Exception lException)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
                 Console.WriteLine("To: " + pOrder.Customer.Email);
                 Console.WriteLine("Order ID: " + pOrder.OrderNumber);
                 Console.WriteLine("Transfer time: " + DateTime.Now);
-                Console.WriteLine("Status: Error occured, Email not sent");
-                Console.WriteLine(pException.Message);
+                Console.WriteLine("Message: " + lException.Message);
+                Console.WriteLine("Status: FAILED");
+                Console.WriteLine("==========================================" + "\n");
+                Console.WriteLine("Failed to send email to customer about error in processing order");
+            }
+        }
+
+        private void SendOrderDeletedErrorMessage(string pCustomerEmail, Guid pOrderId)
+        {
+            try
+            {
+                EmailProvider.SendMessage(new EmailMessage()
+                {
+                    ToAddress = pCustomerEmail,
+                    Message = "Just verifyng that your order of id " + pOrderId + " was cancelled and hence could not be delivered"
+                });
+            }
+            catch (Exception lException)
+            {
+                Console.WriteLine("=================Email====================");
+                Console.WriteLine("From: BookStore");
+                Console.WriteLine("To: " + pCustomerEmail);
+                Console.WriteLine("Order ID: " + pOrderId);
+                Console.WriteLine("Transfer time: " + DateTime.Now);
+                Console.WriteLine("Status: FAIED");
+                Console.WriteLine("Message: " + lException.Message);
                 Console.WriteLine("==========================================" + "\n");
                 Console.WriteLine("Failed to send email to customer about error in processing order");
             }
@@ -284,16 +372,39 @@ namespace BookStore.Business.Components
                     Message = "Your order " + pOrder.OrderNumber + " has been placed"
                 });
             }
-            catch (Exception e)
+            catch (Exception lException)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
                 Console.WriteLine("To: " + pOrder.Customer.Email);
                 Console.WriteLine("Order ID: " + pOrder.OrderNumber);
+                Console.WriteLine("Message " + lException.Message);
                 Console.WriteLine("OrderConfirmation time: " + DateTime.Now);
-                Console.WriteLine("Status: Order Confirmed, Email not sent");
+                Console.WriteLine("Status: FAILURE");
                 Console.WriteLine("==========================================" + "\n");
-                Console.WriteLine("Failed to send email to customer about order confirmation");
+            }
+        }
+
+        private void SendOrderConfirmedConfirmation(Order pOrder)
+        {
+            try
+            {
+                EmailProvider.SendMessage(new EmailMessage()
+                {
+                    ToAddress = pOrder.Customer.Email,
+                    Message = "Your order " + pOrder.OrderNumber + " has been accepted and processed!"
+                });
+            }
+            catch (Exception lException)
+            {
+                Console.WriteLine("=================Email====================");
+                Console.WriteLine("From: BookStore");
+                Console.WriteLine("To: " + pOrder.Customer.Email);
+                Console.WriteLine("Order ID: " + pOrder.OrderNumber);
+                Console.WriteLine("Message " + lException.Message);
+                Console.WriteLine("OrderConfirmation time: " + DateTime.Now);
+                Console.WriteLine("Status: FAILURE");
+                Console.WriteLine("==========================================" + "\n");
             }
         }
 
@@ -331,20 +442,20 @@ namespace BookStore.Business.Components
             }
         }
 
-        private void PlaceDeliveryForOrder(Order pOrder)
+        private void PlaceDeliveryForOrder(Order pOrder, Delivery pDelivery)
         {
-            // Notify DeliveryCo that books are ready to pick up
-            HashSet<String> lAddress = new HashSet<String>();
-            GetDeliveryAddress(lAddress, pOrder);
-            String lSourceAddress = String.Join(", ", lAddress);
+            //// Notify DeliveryCo that books are ready to pick up
+            //HashSet<String> lAddress = new HashSet<String>();
+            //GetDeliveryAddress(lAddress, pOrder);
+            //String lSourceAddress = String.Join(", ", lAddress);
 
-            Delivery lDelivery = new Delivery() { 
-                DeliveryStatus = DeliveryStatus.Submitted, 
-                SourceAddress = lSourceAddress, 
-                DestinationAddress = pOrder.Customer.Address, 
-                Order = pOrder 
-            };
-
+            //Delivery lDelivery = new Delivery() { 
+            //    DeliveryStatus = DeliveryStatus.Submitted, 
+            //    SourceAddress = lSourceAddress, 
+            //    DestinationAddress = pOrder.Customer.Address, 
+            //    Order = pOrder 
+            //};
+            Delivery lDelivery = pDelivery;
             OrderInfo lOrderInfo = new OrderInfo();
 
             foreach (OrderItem oi in pOrder.OrderItems)
@@ -379,7 +490,7 @@ namespace BookStore.Business.Components
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(lDeliveryInfo, lOrderInfo);
 
             lDelivery.ExternalDeliveryIdentifier = lDeliveryIdentifier;
-            pOrder.Delivery = lDelivery;   
+            pOrder.Delivery = lDelivery;
         }
 
         private string TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)

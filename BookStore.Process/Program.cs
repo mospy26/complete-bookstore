@@ -122,15 +122,15 @@ namespace BookStore.Process
                         Title = "No Book"
                     };
 
-                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 4);
-                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 4);
-                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 3);
-                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
+                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 25);
+                    Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 25);
+                    Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 25);
+                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 25);
 
-                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 1);
-                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 5);
-                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 2);
-                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 4);
+                    Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 25);
+                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 25);
+                    Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 25);
+                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 25);
 
                     lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
