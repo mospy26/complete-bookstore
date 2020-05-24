@@ -17,15 +17,17 @@ COMP5348 Assignment to improve the robustnestness and realism of a current BookS
 6. After the databases were created successfully, run each of the `<Database>EntityModel.edmx.sql` files to build the schema for these databases (BookStore, Bank, DeliveryCo) similarly by clicking the play button. This time you may be prompted to select the SQL server in which case you must choose MSSQLLocalDB 
 
 Once you have done all the above preliminary setups, run each of the processes below by right clicking on it, Debug ---> Start New Instance 
-- Bank ---> Bank.Application ---> Bank.Process 
-- BookStore ---> BookStore.Application ---> BookStore.Process
-- DeliveryCo ---> DeliveryCo.Application ---> DeliveryCo.Process
-- EmailService ---> EmailService.Application ---> EmailService.Process
-- BookStore ---> BookStore.WebClient ---> BookStore.WebClient
+```
+Bank ---> Bank.Application ---> Bank.Process
+BookStore ---> BookStore.Application ---> BookStore.Process
+DeliveryCo ---> DeliveryCo.Application ---> DeliveryCo.Process
+EmailService ---> EmailService.Application ---> EmailService.Process
+BookStore ---> BookStore.WebClient ---> BookStore.WebClient
+```
 
-For the <Application>.Process, 4 terminals should pop up, each saying that the Service hsa started. 
+For the `.Process` instances, 4 terminals should pop up, each saying that the Service hsa started. 
   
-Then finally starting an instance of the BookStore.WebClient opens up the BookStore page in a browser window (at localhost:1274)
+Then finally starting an instance of the `BookStore.WebClient` opens up the BookStore page in a browser window (at localhost:1274)
 
 ### Using the Application
 
