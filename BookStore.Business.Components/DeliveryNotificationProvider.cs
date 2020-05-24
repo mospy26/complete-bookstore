@@ -78,7 +78,7 @@ namespace BookStore.Business.Components
             return true;
         }
 
-        public void NotifyDeliveryCompletion(Guid pDeliveryId, Entities.DeliveryStatus status)
+        public void NotifyDeliveryCompletion(Guid pDeliveryId, Entities.DeliveryStatus pStatus)
         {
             Order lAffectedOrder = RetrieveDeliveryOrder(pDeliveryId);
 
@@ -88,8 +88,8 @@ namespace BookStore.Business.Components
                 return;
             }
 
-            UpdateDeliveryStatus(pDeliveryId, status);
-            if (status == Entities.DeliveryStatus.Delivered)
+            UpdateDeliveryStatus(pDeliveryId, pStatus);
+            if (pStatus == Entities.DeliveryStatus.Delivered)
             {
                 EmailProvider.SendMessage(new EmailMessage()
                 {
@@ -104,7 +104,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("======================================================");
                 Console.WriteLine(" ");
             }
-            if (status == Entities.DeliveryStatus.Failed)
+            if (pStatus == Entities.DeliveryStatus.Failed)
             {
                 EmailProvider.SendMessage(new EmailMessage()
                 {
@@ -121,7 +121,7 @@ namespace BookStore.Business.Components
             }
         }
 
-        private void UpdateDeliveryStatus(Guid pDeliveryId, DeliveryStatus status)
+        private void UpdateDeliveryStatus(Guid pDeliveryId, DeliveryStatus pStatus)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
@@ -129,7 +129,7 @@ namespace BookStore.Business.Components
                 Delivery lDelivery = lContainer.Deliveries.Where((pDel) => pDel.ExternalDeliveryIdentifier == pDeliveryId).FirstOrDefault();
                 if (lDelivery != null)
                 {
-                    lDelivery.DeliveryStatus = status;
+                    lDelivery.DeliveryStatus = pStatus;
                     lContainer.SaveChanges();
                 }
                 lScope.Complete();

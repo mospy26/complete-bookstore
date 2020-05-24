@@ -44,8 +44,6 @@ namespace BookStore.Business.Components
             }
         }
 
-
-
         private T GetTcpService<T>(String pAddress)
         {
             NetTcpBinding tcpBinding = new NetTcpBinding() { TransactionFlow = true };

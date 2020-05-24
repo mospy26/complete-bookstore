@@ -240,23 +240,23 @@ namespace BookStore.Business.Components
             }
         }
 
-        private bool DeleteDelivery(string OrderNumber)
+        private bool DeleteDelivery(string pOrderNumber)
         {
-            return ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(OrderNumber);
+            return ExternalServiceFactory.Instance.DeliveryService.DeleteDelivery(pOrderNumber);
         }
 
         // Code taken from stack overflow
         // Gets all permutations of a list of given length
         static IEnumerable<IEnumerable<T>>
-        GetPermutations<T>(IEnumerable<T> list, int length)
+        GetPermutations<T>(IEnumerable<T> pList, int pLength)
         {
-            if (length == 1)
+            if (pLength == 1)
             {
-                return list.Select(t => new T[] { t });
+                return pList.Select(t => new T[] { t });
             }
 
-            return GetPermutations(list, length - 1)
-                .SelectMany(t => list.Where(o => !t.Contains(o)),
+            return GetPermutations(pList, pLength - 1)
+                .SelectMany(t => pList.Where(o => !t.Contains(o)),
                     (t1, t2) => t1.Concat(new T[] { t2 }));
         }
 
@@ -417,22 +417,22 @@ namespace BookStore.Business.Components
             }
         }
 
-        private void SendOrderCancelledConfirmation(String customerEmail, Guid orderEmail)
+        private void SendOrderCancelledConfirmation(String pCustomerEmail, Guid pOrderEmail)
         {
             try
             {
                 EmailProvider.SendMessage(new EmailMessage()
                 {
-                    ToAddress = customerEmail,
-                    Message = "Your order " + orderEmail + " has been cancelled"
+                    ToAddress = pCustomerEmail,
+                    Message = "Your order " + pOrderEmail + " has been cancelled"
                 });
             }
             catch (Exception)
             {
                 Console.WriteLine("=================Email====================");
                 Console.WriteLine("From: BookStore");
-                Console.WriteLine("To: " + customerEmail);
-                Console.WriteLine("Order ID: " + orderEmail);
+                Console.WriteLine("To: " + pCustomerEmail);
+                Console.WriteLine("Order ID: " + pOrderEmail);
                 Console.WriteLine("Cancellation time: " + DateTime.Now);
                 Console.WriteLine("Status: Order Cancelled, Email not sent");
                 Console.WriteLine("==========================================" + "\n");
@@ -566,10 +566,10 @@ namespace BookStore.Business.Components
             }
         }
 
-        private void RestoreStock(List<OrderItem> orderItems, BookStoreEntityModelContainer pContainer)
+        private void RestoreStock(List<OrderItem> pOrderItems, BookStoreEntityModelContainer pContainer)
         {
 
-            List<int> orderIds = orderItems.Select(o => o.Id).ToList<int>();
+            List<int> orderIds = pOrderItems.Select(o => o.Id).ToList<int>();
 
             List<OrderStock> orderStocks = (from OrderStock1 in pContainer.OrderStocks.Include("Stock").Include("OrderItem")
                                             where orderIds.Contains(OrderStock1.OrderItem.Id)

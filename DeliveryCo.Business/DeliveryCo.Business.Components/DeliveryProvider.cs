@@ -12,6 +12,12 @@ namespace DeliveryCo.Business.Components
 {
     public class DeliveryProvider : IDeliveryProvider
     {
+
+        /**
+         * This function will delete the Delivery in the database
+         *
+         * @param OrderNumber: The order number corresponding to the delivery to be deleted
+         */
         public bool DeleteDelivery(String OrderNumber)
         {
 
@@ -41,6 +47,12 @@ namespace DeliveryCo.Business.Components
 
         }
 
+        /**
+         * This function will add a delivery in the database
+         *
+         * @param pDeliveryInfo: The delivery info toadd
+         * @param pOrderItems: The order items to add 
+         */
         public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo, List<Tuple<String, List<String>>> pOrderItems)
         {
             using (TransactionScope lScope = new TransactionScope())
