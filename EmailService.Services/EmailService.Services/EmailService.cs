@@ -25,7 +25,6 @@ namespace EmailService.Services
                     MessageTypeConverter.Instance.Convert<
                     global::EmailService.MessageTypes.EmailMessage,
                     global::EmailService.Business.Entities.EmailMessage>(pMessage)
-                
                 );
         }
     }
