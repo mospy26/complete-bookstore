@@ -27,10 +27,10 @@ namespace BookStore.Business.Entities
                     Console.WriteLine("             Name: " + this.Customer.Name);
                     Console.WriteLine("             Address: " + this.Customer.Address);
                     Console.WriteLine("             Time: " + DateTime.Now);
-                    Console.WriteLine("The order of " + lTotalQuantity + " " + lItem.Book.Title + " cannot be completed");
+                    Console.WriteLine("The order of " + lTotalQuantity + " " + lItem.Book.Title + " cannot be completed" + "\n");
                     
                     
-                    Console.WriteLine("Reason: there is insufficient stock in all of the warehouses");
+                    Console.WriteLine("Reason: there is insufficient stock in all of the warehouses" + "\n");
                     throw new InsufficientStockException() { ItemName = lItem.Book.Title };
                 }
 
@@ -52,7 +52,7 @@ namespace BookStore.Business.Entities
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Ordered: " + lTotalQuantity + " of " + lItem.Book.Title + " from Warehouse #" + lStock.Warehouse.Id);
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
                         lStock.Quantity -= lTotalQuantity;
                         lTotalQuantity = 0;
                     }
@@ -67,7 +67,7 @@ namespace BookStore.Business.Entities
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Ordered: " + lStock.Quantity.Value + " of " + lItem.Book.Title + " from Warehouse #" + lStock.Warehouse.Id);
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
                         int? temp = lStock.Quantity;
                         lStock.Quantity = 0;
                         lTotalQuantity -= temp.Value;

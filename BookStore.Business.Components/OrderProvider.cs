@@ -168,7 +168,7 @@ namespace BookStore.Business.Components
                             Console.WriteLine("             " + lOrderItem.Book.Title + ": Quantity " + lOrderItem.Quantity);
                         }
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
 
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
@@ -200,7 +200,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("             Time: " + DateTime.Now);
                         Console.WriteLine("Failed to restore the order items");
                         
-                        Console.WriteLine("=============================================");
+                        Console.WriteLine("=============================================" + "\n");
 
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();

@@ -21,12 +21,10 @@ namespace EmailService.Services
 
         public void SendEmail(EmailMessage pMessage)
         {
-
             EmailProvider.SendEmail(
                     MessageTypeConverter.Instance.Convert<
                     global::EmailService.MessageTypes.EmailMessage,
                     global::EmailService.Business.Entities.EmailMessage>(pMessage)
-                
                 );
         }
     }
