@@ -11,7 +11,7 @@ namespace BookStore.WebClient.ViewModels
     {
 
         public decimal SizeOfPagination { get; }
-        private int ItemsPerPage = 3; // Change this as need be 
+        private int ItemsPerPage = 10; // Item limit per pages
         private int StartingOffSet;
 
         public CatalogueViewModel(int pStartingOffSet)

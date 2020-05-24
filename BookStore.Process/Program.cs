@@ -98,50 +98,50 @@ namespace BookStore.Process
                         Address = "1 Amazon St"
                     };
 
-                    Book lGreatExpectations = new Book() // 4 4 3 1 as Stocks
+                    Book lGreatExpectations = new Book()
                     {
-                        Author = "Jane Austen",
+                        Author = "Anonymous",
                         Genre = "Fiction",
-                        Price = 20.0,
-                        Title = "1 Pride and Prejudice",
+                        Price = 10.0,
+                        Title = "The Great Expectations",
                     };
 
-                    Book lSoloist = new Book() // 1 5 2 4 
+                    Book lSoloist = new Book()
                     {
                         Author = "Charles Dickens",
                         Genre = "Fiction",
                         Price = 15.0,
-                        Title = "2 Grape Expectations"
+                        Title = "The Solo"
                     };
 
-                    Book lNoBook = new Book() // 1 5 2 4 
+                    Book lMuhitAnik = new Book()
                     {
-                        Author = "No Book",
-                        Genre = "Fiction",
-                        Price = 10.0,
-                        Title = "3 No Book"
+                        Author = "Muhit Anik",
+                        Genre = "Philosophy",
+                        Price = 20.0,
+                        Title = "The Journey of Muhit Anik",
                     };
 
 
-                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 1);
+                    Stock lGreatExpectationNeutralBayStock = CreateStock(lGreatExpectations, lNeutralBay, 10);
                     Stock lGreatExpectationTheWarehouseStock = CreateStock(lGreatExpectations, lTheWarehouse, 0);
                     Stock lGreatExpectationStorageKingStock = CreateStock(lGreatExpectations, lStorageKing, 0);
-                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 1);
+                    Stock lGreatExpectationAmazonStock = CreateStock(lGreatExpectations, lAmazon, 10);
 
                     Stock lSoloistNeutralBayStock = CreateStock(lSoloist, lNeutralBay, 0);
-                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 1);
+                    Stock lSoloistTheWarehouseStock = CreateStock(lSoloist, lTheWarehouse, 10);
                     Stock lSoloistStorageKingStock = CreateStock(lSoloist, lStorageKing, 0);
-                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 0);
+                    Stock lSoloistAmazonStock = CreateStock(lSoloist, lAmazon, 10);
 
 
-                    Stock lNoBookNeutralBayStock = CreateStock(lNoBook, lNeutralBay, 0);
-                    Stock lNoBookTheWarehouseStock = CreateStock(lNoBook, lTheWarehouse, 0);
-                    Stock lNoBookStorageKingStock = CreateStock(lNoBook, lStorageKing, 1);
-                    Stock lNoBookAmazonStock = CreateStock(lNoBook, lAmazon, 1);
+                    Stock lNoBookNeutralBayStock = CreateStock(lMuhitAnik, lNeutralBay, 0);
+                    Stock lNoBookTheWarehouseStock = CreateStock(lMuhitAnik, lTheWarehouse, 0);
+                    Stock lNoBookStorageKingStock = CreateStock(lMuhitAnik, lStorageKing, 10);
+                    Stock lNoBookAmazonStock = CreateStock(lMuhitAnik, lAmazon, 10);
 
                     lContainer.Books.Add(lGreatExpectations);
                     lContainer.Books.Add(lSoloist);
-                    lContainer.Books.Add(lNoBook);
+                    lContainer.Books.Add(lMuhitAnik);
 
                     lContainer.Stocks.Add(lGreatExpectationNeutralBayStock);
                     lContainer.Stocks.Add(lGreatExpectationTheWarehouseStock);
@@ -158,31 +158,35 @@ namespace BookStore.Process
                     lContainer.Stocks.Add(lNoBookStorageKingStock);
                     lContainer.Stocks.Add(lNoBookAmazonStock);
 
-                    //for (int i = 1; i < 10; i++)
-                    //{
-                    //    Book lItem = new Book()
-                    //    {
-                    //        Author = String.Format("Author {0}", i.ToString()),
-                    //        Genre = String.Format("Genre {0}", i),
-                    //        Price = i,
-                    //        Title = String.Format("Title {0}", i)
-                    //    };
+                    for (int i = 5; i < 31; i++)
+                    {
+                        Book lItem = new Book()
+                        {
+                            Author = String.Format("Author {0}", i.ToString()),
+                            Genre = String.Format("Genre {0}", i),
+                            Price = i,
+                            Title = String.Format("Title {0}", i)
+                        };
 
-                    //    lContainer.Stocks.Add(lSoloistStock);
+                        lContainer.Books.Add(lItem);
 
-                    //    Stock lStock = new Stock()
-                    //    {
-                    //        Book = lItem,
-                    //        Quantity = 10 + i,
-                    //        // Warehouse = String.Format("Warehouse {0}", i)
-                    //        Warehouse = new Warehouse()
-                    //        {
-                    //            Name = String.Format("Warehouse {0}", i)
-                    //        }
-                    //    };
+                        Warehouse lWarehouse = new Warehouse()
+                        {
+                            Name = String.Format("The Warehouse {0}", i),
+                            Address = String.Format("Warehouse {0}'s palace", i)
+                        };
 
-                    //    lContainer.Stocks.Add(lStock);
-                    //}
+                        Stock lStock = new Stock()
+                        {
+                            Book = lItem,
+                            Quantity = 10 + i,
+                            // Warehouse = String.Format("Warehouse {0}", i)
+                            Warehouse = lWarehouse
+                        };
+
+                        lContainer.Warehouses.Add(lWarehouse);
+                        lContainer.Stocks.Add(lStock);
+                    }
 
                     lContainer.SaveChanges();
                     lScope.Complete();
