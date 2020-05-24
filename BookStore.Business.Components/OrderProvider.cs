@@ -95,6 +95,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("Status: SUCCESS");
                         Console.WriteLine("Time: " + DateTime.Now);
                         Console.WriteLine("======================================");
+                        Console.WriteLine(" ");
 
                         // and save the order
                         lContainer.SaveChanges();
@@ -107,7 +108,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("Status: FAILED");
                         Console.WriteLine("Time: " + DateTime.Now);
                         Console.WriteLine("======================================");
-
+                        Console.WriteLine(" ");
                         // need to rollback bank transfer if the transfer happened
                         if (result == "Transfer Success")
                         {
@@ -118,6 +119,7 @@ namespace BookStore.Business.Components
                             Console.WriteLine("Total: " + pOrder.Total);
                             Console.WriteLine("Time: " + DateTime.Now);
                             Console.WriteLine("======================================");
+                            Console.WriteLine(" ");
                             TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
                         }
                         SendOrderErrorMessage(pOrder, lException);
@@ -169,7 +171,7 @@ namespace BookStore.Business.Components
                         }
                         
                         Console.WriteLine("=============================================" + "\n");
-
+                        Console.WriteLine(" ");
                         // Restore stocks
                         RestoreStock(orderItems, lContainer);
 
@@ -201,7 +203,7 @@ namespace BookStore.Business.Components
                         Console.WriteLine("Failed to restore the order items");
                         
                         Console.WriteLine("=============================================" + "\n");
-
+                        Console.WriteLine(" ");
                         SendOrderErrorMessage(lOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries = lContainer.ChangeTracker.Entries();
                         throw;
@@ -323,7 +325,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Dest Addr: " + lDelivery.DestinationAddress);
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=======================================");
-
+            Console.WriteLine(" ");
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(lDeliveryInfo, lOrderInfo);
 
             lDelivery.ExternalDeliveryIdentifier = lDeliveryIdentifier;
@@ -338,6 +340,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("TOTAL: " + pTotal);
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("==================================");
+            Console.WriteLine(" ");
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
 
@@ -349,11 +352,19 @@ namespace BookStore.Business.Components
                 Console.WriteLine("From: " + pCustomerAccountNumber);
                 Console.WriteLine("Total: " + pTotal);
                 Console.WriteLine("Time: " + DateTime.Now);
+                Console.WriteLine("Status: SUCCESS");
                 Console.WriteLine("=======================================");
+                Console.WriteLine(" ");
                 ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
             catch
             {
+                Console.WriteLine("===========Transferred Funds===========");
+                Console.WriteLine("Time: " + DateTime.Now);
+                Console.WriteLine("Status: FAIL");
+                Console.WriteLine("Error in Acc Number or Total");
+                Console.WriteLine("=======================================");
+                Console.WriteLine(" ");
                 throw new Exception("Error transferring funds to customer"); // TODO better exception
             }
         }
@@ -412,6 +423,7 @@ namespace BookStore.Business.Components
             }
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=============================================");
+            Console.WriteLine(" ");
         }
     }
 }

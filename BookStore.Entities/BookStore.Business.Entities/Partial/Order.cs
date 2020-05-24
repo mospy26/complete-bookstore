@@ -30,7 +30,9 @@ namespace BookStore.Business.Entities
                     Console.WriteLine("The order of " + lTotalQuantity + " " + lItem.Book.Title + " cannot be completed" + "\n");
                     
                     
+                    
                     Console.WriteLine("Reason: there is insufficient stock in all of the warehouses" + "\n");
+                    Console.WriteLine("=============================================" + "\n");
                     throw new InsufficientStockException() { ItemName = lItem.Book.Title };
                 }
 

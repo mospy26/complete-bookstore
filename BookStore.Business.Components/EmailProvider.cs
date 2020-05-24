@@ -15,6 +15,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Address: " + pMessage.ToAddress);
             Console.WriteLine("Date: " + DateTime.Now);
             Console.WriteLine("==============================================" + "\n");
+            Console.WriteLine(" ");
             ExternalServiceFactory.Instance.EmailService.SendEmail
                 (
                     new global::EmailService.MessageTypes.EmailMessage()

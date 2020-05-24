@@ -29,6 +29,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Status: FAILED");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("=================================================");
+                Console.WriteLine(" ");
                 return false;
             }
             EmailProvider.SendMessage(new EmailMessage()
@@ -43,7 +44,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Status: SUCCESS");
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=================================================");
-
+            Console.WriteLine(" ");
             return true;
         }
 
@@ -60,6 +61,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("Reason: Order was cancelled before being delivered");
                 Console.WriteLine("===================================================");
+                Console.WriteLine(" ");
                 return false;
             }
             EmailProvider.SendMessage(new EmailMessage()
@@ -74,6 +76,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Status: SUCCESS");
             Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("===================================================");
+            Console.WriteLine(" ");
 
             return true;
         }
@@ -102,6 +105,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Status: SUCCESS");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("======================================================");
+                Console.WriteLine(" ");
             }
             if (status == Entities.DeliveryStatus.Failed)
             {
@@ -116,6 +120,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Status: FAILED");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("======================================================");
+                Console.WriteLine(" ");
             }
         }
 
@@ -148,6 +153,7 @@ namespace BookStore.Business.Components
                     Console.WriteLine("Status: FAILED");
                     Console.WriteLine("Time: " + DateTime.Now);
                     Console.WriteLine("==============================================");
+                    Console.WriteLine(" ");
                     return null;
                 }
                 Console.WriteLine("============Retrieve Deliver Order============");
@@ -155,7 +161,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Status: SUCCESS");
                 Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("==============================================");
-
+                Console.WriteLine(" ");
                 return lDelivery.Order;
             }
         }
