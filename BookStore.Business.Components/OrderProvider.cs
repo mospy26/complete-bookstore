@@ -90,16 +90,35 @@ namespace BookStore.Business.Components
                         // transfer was successful : ask the delivery service to organise delivery
                         PlaceDeliveryForOrder(pOrder);
 
+                        Console.WriteLine("=============Order Submit=============");
+                        Console.WriteLine("Order ID: " + pOrder.Id);
+                        Console.WriteLine("Status: SUCCESS");
+                        Console.WriteLine("Time: " + DateTime.Now);
+                        Console.WriteLine("======================================");
+
                         // and save the order
                         lContainer.SaveChanges();
                         lScope.Complete();        
                     }
                     catch (Exception lException)
                     {
+                        Console.WriteLine("=============Order Submit=============");
+                        Console.WriteLine("Order ID: " + pOrder.Id);
+                        Console.WriteLine("Status: FAILED");
+                        Console.WriteLine("Time: " + DateTime.Now);
+                        Console.WriteLine("======================================");
+
                         // need to rollback bank transfer if the transfer happened
                         if (result == "Transfer Success")
                         {
-                          TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                            Console.WriteLine("=============CALLING BANK=============");
+                            Console.WriteLine("Intiating ROLLBACK on bank trasnfer");
+                            Console.WriteLine("Order ID: " + pOrder.Id);
+                            Console.WriteLine("Acc Number: " + UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber);
+                            Console.WriteLine("Total: " + pOrder.Total);
+                            Console.WriteLine("Time: " + DateTime.Now);
+                            Console.WriteLine("======================================");
+                            TransferFundsToCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
                         }
                         SendOrderErrorMessage(pOrder, lException);
                         IEnumerable<System.Data.Entity.Infrastructure.DbEntityEntry> entries =  lContainer.ChangeTracker.Entries();
@@ -296,6 +315,14 @@ namespace BookStore.Business.Components
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
             };
 
+            Console.WriteLine("============Delivery Placed============");
+            Console.WriteLine("SUBMITTING DELIVERY SERVICE with the");
+            Console.WriteLine("following information:");
+            Console.WriteLine("Order Number: " + lDelivery.Order.OrderDate.ToString());
+            Console.WriteLine("Source Addr: " + lDelivery.SourceAddress);
+            Console.WriteLine("Dest Addr: " + lDelivery.DestinationAddress);
+            Console.WriteLine("Time: " + DateTime.Now);
+            Console.WriteLine("=======================================");
 
             Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(lDeliveryInfo, lOrderInfo);
 
@@ -309,6 +336,7 @@ namespace BookStore.Business.Components
             Console.WriteLine("Intiating transfer:");
             Console.WriteLine("Account Number: " + pCustomerAccountNumber);
             Console.WriteLine("TOTAL: " + pTotal);
+            Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("==================================");
             return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
         }
@@ -320,6 +348,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("===========Transferred Funds===========");
                 Console.WriteLine("From: " + pCustomerAccountNumber);
                 Console.WriteLine("Total: " + pTotal);
+                Console.WriteLine("Time: " + DateTime.Now);
                 Console.WriteLine("=======================================");
                 ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, RetrieveBookStoreAccountNumber(), pCustomerAccountNumber);
             } 
@@ -381,6 +410,7 @@ namespace BookStore.Business.Components
                 pContainer.Entry(stock).Property(x => x.Quantity).IsModified = true;
                 
             }
+            Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("=============================================");
         }
     }

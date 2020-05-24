@@ -23,6 +23,7 @@ namespace DeliveryCo.Business.Components
                     Console.WriteLine("===========Delivery Deleted===========");
                     Console.WriteLine("Order Number: " + OrderNumber);
                     Console.WriteLine("Status: SUCCESS");
+                    Console.WriteLine("Time: " + DateTime.Now);
                     Console.WriteLine("======================================");
                     DeliveryInfo deleteDelivery = lContainer.DeliveryInfo.Where<DeliveryInfo>(s => s.OrderNumber.Equals(OrderNumber)).First();
                     lContainer.DeliveryInfo.Remove(deleteDelivery);
@@ -33,6 +34,7 @@ namespace DeliveryCo.Business.Components
                     Console.WriteLine("===========Delivery Deleted===========");
                     Console.WriteLine("Order Number: " + OrderNumber);
                     Console.WriteLine("Status: FAILED");
+                    Console.WriteLine("Time: " + DateTime.Now);
                     Console.WriteLine("======================================");
                     return false;
                 }
@@ -59,6 +61,7 @@ namespace DeliveryCo.Business.Components
             {
                 Console.WriteLine("          " + x.Item1);
             }
+            Console.WriteLine("Time: " + DateTime.Now);
             Console.WriteLine("========================================");
 
             return pDeliveryInfo.DeliveryIdentifier;

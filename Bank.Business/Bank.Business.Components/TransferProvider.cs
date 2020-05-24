@@ -56,14 +56,20 @@ namespace Bank.Business.Components
                 }
                 catch (ArgumentNullException lException)
                 {
+                    Console.WriteLine("===========Error in Transfer Money============");
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
+                    Console.WriteLine("Error: one of the accounts does not exist");
+                    Console.WriteLine("==============================================");
                     String lMessage = "Transfer Failed: One of the accounts does not exist"; // TODO Find the proper account
                     Console.WriteLine(lMessage);
                     return lMessage;
                 }
                 catch (Exception lException)
                 {
+                    Console.WriteLine("===========Error in Transfer Money============");
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
+                    Console.WriteLine("Error: Unknown Error");
+                    Console.WriteLine("==============================================");
                     return "Transfer Failed: Unknown Error";
                 }
             }
@@ -76,7 +82,10 @@ namespace Bank.Business.Components
         {
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
             {
+                Console.WriteLine("===============Get Account Numbe===============");
                 Console.WriteLine("Account number gotten: " + pToAcctNumber);
+                Console.WriteLine("Transfer time: " + DateTime.Now);
+                Console.WriteLine("===============================================");
                 return lContainer.Accounts.Where((pAcct) => (pAcct.AccountNumber == pToAcctNumber)).FirstOrDefault();
             }
         }
