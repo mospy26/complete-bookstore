@@ -92,9 +92,6 @@ namespace BookStore.Business.Components
                             throw new Exception(lResult);
                         }
 
-                        //// transfer was successful : ask the delivery service to organise delivery
-                        //PlaceDeliveryForOrder(pOrder);
-
                         Console.WriteLine("=============Order Submit=============");
                         Console.WriteLine("Order ID: " + pOrder.Id);
                         Console.WriteLine("Status: SUCCESS");
@@ -136,6 +133,8 @@ namespace BookStore.Business.Components
             }
 
             SendOrderConfirmedConfirmation(pOrder);
+
+            // User has 20 seconds to cancel the order
             Thread.Sleep(20000);
 
             using (TransactionScope lScope = new TransactionScope())
@@ -155,6 +154,7 @@ namespace BookStore.Business.Components
                 }
             }
 
+            // 5 seconds later the order will be scheduled for delivery
             Thread.Sleep(5000);
 
             using (TransactionScope lScope = new TransactionScope())
@@ -168,7 +168,8 @@ namespace BookStore.Business.Components
                     PlaceDeliveryForOrder(lOrder, lDelivery);
                     lContainer.SaveChanges();
                     lScope.Complete();
-                } catch (Exception lException)
+                } 
+                catch (Exception lException)
                 {
                     SendOrderDeletedErrorMessage(lCustomerEmail, lOrderId);
                     return "Order Failed";
@@ -216,7 +217,6 @@ namespace BookStore.Business.Components
 
                         if (lOrder == null) throw new OrderDoesNotExistException();
                         if (lOrder.Delivery != null) throw new OrderHasAlreadyBeenDeliveredException();
-                        //if (lOrder.Delivery.DeliveryStatus == DeliveryStatus.Delivered || lOrder.Delivery.DeliveryStatus == DeliveryStatus.Submitted) throw new OrderHasAlreadyBeenDeliveredException();
 
                         customerEmail = lOrder.Customer.Email;
                         orderNumber = lOrder.OrderNumber;
@@ -249,7 +249,6 @@ namespace BookStore.Business.Components
                         DeleteDelivery(lOrder.OrderNumber.ToString());
 
                         lOrder.OrderItems.ToList().ForEach(o => { lContainer.Entry(o).State = System.Data.Entity.EntityState.Deleted; });
-                        //lContainer.Entry(lOrder.Delivery).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Entry(lOrder).State = System.Data.Entity.EntityState.Deleted;
                         lContainer.Orders.Remove(lOrder);
 
@@ -300,11 +299,6 @@ namespace BookStore.Business.Components
         //    }
         //}
 
-        // Brute force method: given digits n, generate an array from 1234 to 6789 if n = 4
-        // Total = total number of warehouses...
-        // Need to list all combination of n elements of size total...
-
-        // Prints all combinations of n from array r
         private void LoadOptimalWarehouseStocks()
         {
             using (BookStoreEntityModelContainer lContainer = new BookStoreEntityModelContainer())
@@ -397,7 +391,7 @@ namespace BookStore.Business.Components
             }
             catch (Exception lException)
             {
-                Console.WriteLine("=================Email====================");
+                Console.WriteLine("=================Failed Email====================");
                 Console.WriteLine("From: BookStore");
                 Console.WriteLine("To: " + pOrder.Customer.Email);
                 Console.WriteLine("Order ID: " + pOrder.OrderNumber);
@@ -418,9 +412,9 @@ namespace BookStore.Business.Components
                     Message = "Your order " + orderEmail + " has been cancelled"
                 });
             }
-            catch (Exception e)
+            catch (Exception lException)
             {
-                Console.WriteLine("=================Email====================");
+                Console.WriteLine("=================Failed Email====================");
                 Console.WriteLine("From: BookStore");
                 Console.WriteLine("To: " + customerEmail);
                 Console.WriteLine("Order ID: " + orderEmail);
@@ -444,17 +438,6 @@ namespace BookStore.Business.Components
 
         private void PlaceDeliveryForOrder(Order pOrder, Delivery pDelivery)
         {
-            //// Notify DeliveryCo that books are ready to pick up
-            //HashSet<String> lAddress = new HashSet<String>();
-            //GetDeliveryAddress(lAddress, pOrder);
-            //String lSourceAddress = String.Join(", ", lAddress);
-
-            //Delivery lDelivery = new Delivery() { 
-            //    DeliveryStatus = DeliveryStatus.Submitted, 
-            //    SourceAddress = lSourceAddress, 
-            //    DestinationAddress = pOrder.Customer.Address, 
-            //    Order = pOrder 
-            //};
             Delivery lDelivery = pDelivery;
             OrderInfo lOrderInfo = new OrderInfo();
 
@@ -495,21 +478,34 @@ namespace BookStore.Business.Components
 
         private string TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
         {
-            Console.WriteLine("===========Calling BANK===========");
-            Console.WriteLine("Intiating transfer:");
-            Console.WriteLine("Account Number: " + pCustomerAccountNumber);
-            Console.WriteLine("TOTAL: " + pTotal);
-            Console.WriteLine("Time: " + DateTime.Now);
-            Console.WriteLine("==================================");
-            Console.WriteLine(" ");
-            return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
+            try
+            {
+                Console.WriteLine("===========Calling BANK===========");
+                Console.WriteLine("Intiating transfer:");
+                Console.WriteLine("Account Number: " + pCustomerAccountNumber);
+                Console.WriteLine("TOTAL: " + pTotal);
+                Console.WriteLine("Time: " + DateTime.Now);
+                Console.WriteLine("==================================");
+                Console.WriteLine(" ");
+                return ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveBookStoreAccountNumber());
+            }
+            catch
+            {
+                Console.WriteLine("===========Transferred Funds===========");
+                Console.WriteLine("Time: " + DateTime.Now);
+                Console.WriteLine("Status: FAIL");
+                Console.WriteLine("Error in Acc Number or Total");
+                Console.WriteLine("=======================================");
+                Console.WriteLine(" ");
+                throw new Exception("Error transferring funds to customer");
+            }
         }
 
         private string TransferFundsToCustomer(int pCustomerAccountNumber, double pTotal)
         {
             try
             {
-                Console.WriteLine("===========Transferred Funds===========");
+                Console.WriteLine("===========Calling BANK===========");
                 Console.WriteLine("From: " + pCustomerAccountNumber);
                 Console.WriteLine("Total: " + pTotal);
                 Console.WriteLine("Time: " + DateTime.Now);
@@ -526,7 +522,7 @@ namespace BookStore.Business.Components
                 Console.WriteLine("Error in Acc Number or Total");
                 Console.WriteLine("=======================================");
                 Console.WriteLine(" ");
-                throw new Exception("Error transferring funds to customer"); // TODO better exception
+                throw new Exception("Error transferring funds to customer");
             }
         }
 
