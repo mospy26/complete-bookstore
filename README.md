@@ -1,6 +1,6 @@
 
 # BookStore in .NET
-COMP5348 Assignment to improve the performance
+COMP5348 Assignment to improve the performance, robustness and realism of an existing BookStore solution
 
 ## Getting Started
 
