@@ -20,8 +20,11 @@ namespace BookStore.WebClient.ViewModels
             this.StartingOffSet = pStartingOffSet * ItemsPerPage;
 
             int lTotalBooks = GetTotalBooks;
-            decimal lSizeOfPagination = lTotalBooks / ItemsPerPage;
 
+            // Amount of pages 
+            decimal lSizeOfPagination = lTotalBooks / ItemsPerPage;
+            
+            // Check if an extra page is necessary
             if (lTotalBooks % ItemsPerPage == 0)
             {
                 SizeOfPagination = Math.Floor(lSizeOfPagination);
