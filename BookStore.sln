@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BookStore.Application", "BookStore.Application", "{FC0CADD9-162D-4370-A0D0-B31FA3479D2F}"
 EndProject
@@ -98,6 +98,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService.Business.Components.Interfaces", "EmailService.Business.Entities.Interfaces\EmailService.Business.Components.Interfaces.csproj", "{2AF87E55-5C90-4454-AA47-BF8B14CBD874}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliveryCo.MessageTypes", "DeliveryCo.MessageTypes\DeliveryCo.MessageTypes.csproj", "{441C1B38-48E4-4888-898F-CB5A9517B7A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2B490230-AA40-49DF-9A82-86F1D7DD257A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
